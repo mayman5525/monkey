@@ -1,27 +1,8 @@
-module.exports({
-    user_id:{
-        type: String,
-        required: true
+const pool = require('../db');
 
-    },
-    user_name:{
-        type: String,
-        required: false
-    },
-    user_email:{
-        type: String,
-        required: false
-        },
-        user_number:{
-            type: Number,
-            required:true
-        },
-    is_new:{
-        type : Boolean,
-        default:true
-    },
-    has_points:{
-        type:Boolean,
-        default:false
-    }
-})
+async function getAllUsers() {
+  const res = await pool.query('SELECT * FROM users');
+  return res.rows;
+}
+
+module.exports = { getAllUsers };

@@ -1,33 +1,32 @@
-const express = require("express");
-const { Client } = require("pg");
+const express = require('express');
+const pool = require('./modules/db');
+const { getAllUsers } = require('./models/user');
+const { getAllProducts } = require('./models/product');
+const { createForm } = require('./models/form');
 
 const app = express();
-const PORT = 3000;
+app.use(express.json());
 
-// const PG_CONFIG = {
-//   user: "monkey_yh8b_user",
-//   host: "dpg-d1s13dbe5dus73flrro0-a",
-//   database: "monkey_yh8b",
-//   password: "QlfrzgJ6LZMlDVlr6ZIj2IOsyCoQzXiF",
-//   port: 5432,
-// };
-
-const client = new Client(
-);
-
-client
-  .connect()
-  .then(() => {
-    console.log("Connected to PostgreSQL");
-  })
-  .catch((err) => {
-    console.error("PostgreSQL connection error:", err);
-  });
-
-app.get("/", (req, res) => {
-  res.send("App and database connectivity test successful!");
+app.get('/users', async (req, res) => {
+  const users = await getAllUsers();
+  res.json(users);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.get('/products', async (req, res) => {
+  const products = await getAllProducts();
+  res.json(products);
+});
+
+app.post('/forms', async (req, res) => {
+  try {
+    const form = await createForm(req.body);
+    res.status(201).json(form);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error creating form');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
 });
