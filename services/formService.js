@@ -1,53 +1,76 @@
-const {
-  createFormService,
-  getAllFormsService,
-} = require('../services/form.service');
-const pool = require('../db');
+const FormModel = require('../modules/form');
+const { validateFormData, sanitizeFormData } = require('../utils/vaidation');
 
-const createForm = async (req, res) => {
-  try {
-    const { name, phone_number, email } = req.body;
+class FormService {
+  static async createForm(formData) {
 
-    if (!name || !phone_number) {
-      return res.status(400).json({ message: 'name and phone_number are required' });
+    const validation = validateFormData(formData);
+    if (!validation.isValid) {
+      const error = new Error('Validation failed');
+      error.statusCode = 400;
+      error.details = validation.errors;
+      throw error;
     }
 
-    // ✅ Inline check inside the same API
-    const checkQuery = 'SELECT * FROM forms WHERE name = $1 OR phone_number = $2';
-    const checkResult = await pool.query(checkQuery, [name, phone_number]);
+    
+    const sanitizedData = sanitizeFormData(formData);
+    const { name, phone_number, email } = sanitizedData;
 
-    if (checkResult.rows.length > 0) {
-      return res.status(409).json({
-        message: 'User with this name or phone number already exists',
-      });
+    // Check if form already exists
+    const existingForm = await FormModel.findByNameOrPhone(name, phone_number);
+    if (existingForm) {
+      const error = new Error('Form with this name or phone number already exists');
+      error.statusCode = 409;
+      throw error;
     }
 
-    // Insert new form if no duplicate
-    const insertQuery = `
-      INSERT INTO forms (name, phone_number, email)
-      VALUES ($1, $2, $3)
-      RETURNING *
-    `;
-    const insertResult = await pool.query(insertQuery, [name, phone_number, email]);
-
-    res.status(201).json(insertResult.rows[0]);
-  } catch (error) {
-    console.error('Error creating form:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    const newForm = await FormModel.create({ name, phone_number, email });
+    return newForm;
   }
-};
 
-const getForms = async (req, res) => {
-  try {
-    const forms = await getAllFormsService();
-    res.status(200).json(forms);
-  } catch (error) {
-    console.error('Error fetching forms:', error);
-    res.status(500).json({ message: 'Internal server error' });
+  static async getAllForms(page = 1, limit = 50) {
+    const offset = (page - 1) * limit;
+    
+    if (page < 1 || limit < 1 || limit > 100) {
+      const error = new Error('Invalid pagination parameters');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const [forms, total] = await Promise.all([
+      FormModel.findAll(limit, offset),
+      FormModel.count()
+    ]);
+
+    return {
+      forms,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1
+      }
+    };
   }
-};
 
-module.exports = {
-  createForm,
-  getForms,
-};
+  static async getFormById(id) {
+    if (!id || isNaN(id)) {
+      const error = new Error('Invalid form ID');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const form = await FormModel.findById(id);
+    if (!form) {
+      const error = new Error('Form not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return form;
+  }
+}
+
+module.exports = FormService;

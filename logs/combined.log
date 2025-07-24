@@ -1,0 +1,70 @@
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:26:09.111Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:28:22.649Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:28:47.607Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:33:11.324Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:33:44.208Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:34:00.285Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:34:14.796Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:36:43.168Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-23T18:36:44.800Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-23T18:37:17.669Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:40:11.962Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-23T18:40:13.701Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-23T18:41:33.833Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:41:38.035Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-23T18:41:39.738Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-23T18:41:56.877Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T18:42:11.907Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-23T18:42:14.220Z"}
+{"level":"info","message":"::1 - - [23/Jul/2025:18:52:25 +0000] \"POST /api/forms HTTP/1.1\" 400 110 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-23T18:52:25.891Z"}
+{"level":"error","message":"Error creating form: relation \"forms\" does not exist","service":"form-api","stack":"error: relation \"forms\" does not exist\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async FormModel.findByNameOrPhone (D:\\pr\\monkey\\monkey\\modules\\form.js:22:20)\n    at async FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:20:26)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":500,"timestamp":"2025-07-23T18:52:37.539Z"}
+{"level":"info","message":"::1 - - [23/Jul/2025:18:52:37 +0000] \"POST /api/forms HTTP/1.1\" 500 51 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-23T18:52:37.542Z"}
+{"level":"error","message":"Error creating form: relation \"forms\" does not exist","service":"form-api","stack":"error: relation \"forms\" does not exist\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async FormModel.findByNameOrPhone (D:\\pr\\monkey\\monkey\\modules\\form.js:22:20)\n    at async FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:20:26)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":500,"timestamp":"2025-07-23T18:52:59.312Z"}
+{"level":"info","message":"::1 - - [23/Jul/2025:18:52:59 +0000] \"POST /api/forms HTTP/1.1\" 500 51 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-23T18:52:59.324Z"}
+{"level":"error","message":"Error creating form: relation \"forms\" does not exist","service":"form-api","stack":"error: relation \"forms\" does not exist\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async FormModel.findByNameOrPhone (D:\\pr\\monkey\\monkey\\modules\\form.js:22:20)\n    at async FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:20:26)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":500,"timestamp":"2025-07-23T18:54:36.119Z"}
+{"level":"info","message":"::1 - - [23/Jul/2025:18:54:36 +0000] \"POST /api/forms HTTP/1.1\" 500 51 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-23T18:54:36.123Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-23T18:57:01.686Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-23T19:48:09.347Z"}
+{"code":"ENOTFOUND","errno":-3008,"hostname":"dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com","level":"error","message":"Database connection failed: getaddrinfo ENOTFOUND dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com","service":"form-api","stack":"Error: getaddrinfo ENOTFOUND dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"getaddrinfo","timestamp":"2025-07-23T19:48:09.356Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-24T03:17:03.744Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T03:17:05.513Z"}
+{"level":"info","message":"Server running on port 3000","service":"form-api","timestamp":"2025-07-24T03:35:17.804Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T03:35:19.570Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-24T03:56:30.997Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:22:56.953Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-24T04:22:57.646Z"}
+{"level":"error","message":"Error creating form: column \"updated_at\" of relation \"forms\" does not exist","service":"form-api","stack":"error: column \"updated_at\" of relation \"forms\" does not exist\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async FormModel.create (D:\\pr\\monkey\\monkey\\modules\\form.js:11:20)\n    at async FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:27:21)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":500,"timestamp":"2025-07-24T04:23:05.547Z"}
+{"level":"info","message":"::1 - - [24/Jul/2025:04:23:05 +0000] \"POST /api/forms HTTP/1.1\" 500 51 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-24T04:23:05.553Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:24:53.995Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:27:00.283Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:28:01.136Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:28:11.535Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:28:54.725Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:29:31.162Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:30:28.734Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:31:01.159Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:31:18.133Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:32:52.518Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:33:17.114Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:33:47.364Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-24T04:33:47.580Z"}
+{"level":"error","message":"Error creating form: column \"updated_at\" of relation \"forms\" does not exist","service":"form-api","stack":"error: column \"updated_at\" of relation \"forms\" does not exist\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async FormModel.create (D:\\pr\\monkey\\monkey\\modules\\form.js:11:20)\n    at async FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:27:21)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":500,"timestamp":"2025-07-24T04:33:56.801Z"}
+{"level":"info","message":"::1 - - [24/Jul/2025:04:33:56 +0000] \"POST /api/forms HTTP/1.1\" 500 51 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-24T04:33:56.807Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:34:30.175Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:36:02.405Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-24T04:36:02.625Z"}
+{"level":"error","message":"Error creating form: column \"updated_at\" of relation \"forms\" does not exist","service":"form-api","stack":"error: column \"updated_at\" of relation \"forms\" does not exist\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async FormModel.create (D:\\pr\\monkey\\monkey\\modules\\form.js:11:20)\n    at async FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:27:21)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":500,"timestamp":"2025-07-24T04:36:11.670Z"}
+{"level":"info","message":"::1 - - [24/Jul/2025:04:36:11 +0000] \"POST /api/forms HTTP/1.1\" 500 51 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-24T04:36:11.678Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:41:33.507Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-24T04:41:33.911Z"}
+{"level":"info","message":"New form created with ID: 1","service":"form-api","timestamp":"2025-07-24T04:41:41.633Z"}
+{"level":"info","message":"::1 - - [24/Jul/2025:04:41:41 +0000] \"POST /api/forms HTTP/1.1\" 201 220 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-24T04:41:41.641Z"}
+{"level":"info","message":"New form created with ID: 2","service":"form-api","timestamp":"2025-07-24T04:42:05.162Z"}
+{"level":"info","message":"::1 - - [24/Jul/2025:04:42:05 +0000] \"POST /api/forms HTTP/1.1\" 201 233 \"-\" \"PostmanRuntime/7.44.1\"","service":"form-api","timestamp":"2025-07-24T04:42:05.164Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-24T04:42:27.184Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:43:18.116Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-24T04:43:18.388Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-24T04:43:27.478Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:43:51.903Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-24T04:43:52.102Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-24T04:43:53.788Z"}

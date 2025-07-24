@@ -1,43 +1,77 @@
-// controllers/form.controller.js
-const {
-  createForm,
-  getForms,
-  
-} = require('../services/formService');
+const FormService = require('../services/formService');
+const logger = require('../utils/logger');
 
-const createForm = async (req, res) => {
-  try {
-    const { name, phone_number, email } = req.body;
+class FormController {
+  static async createForm(req, res) {
+    try {
+      const formData = req.body;
+      const newForm = await FormService.createForm(formData);
+      
+      logger.info(`New form created with ID: ${newForm.id}`);
+      res.status(201).json({
+        success: true,
+        message: 'Form created successfully',
+        data: newForm
+      });
+    } catch (error) {
+      FormController.handleError(error, res, 'Error creating form');
+    }
+  }
 
-    if (!name || !phone_number) {
-      return res.status(400).json({ message: 'name and phone_number are required' });
+  static async getForms(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 50;
+      
+      const result = await FormService.getAllForms(page, limit);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Forms retrieved successfully',
+        data: result.forms,
+        pagination: result.pagination
+      });
+    } catch (error) {
+      FormController.handleError(error, res, 'Error fetching forms');
+    }
+  }
+
+  static async getFormById(req, res) {
+    try {
+      const { id } = req.params;
+      const form = await FormService.getFormById(id);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Form retrieved successfully',
+        data: form
+      });
+    } catch (error) {
+      FormController.handleError(error, res, 'Error fetching form');
+    }
+  }
+
+  static handleError(error, res, logMessage) {
+    const statusCode = error.statusCode || 500;
+    const message = statusCode === 500 ? 'Internal server error' : error.message;
+    
+    logger.error(`${logMessage}: ${error.message}`, {
+      stack: error.stack,
+      statusCode
+    });
+
+    const response = {
+      success: false,
+      message
+    };
+
+    // Include validation details for 400 errors
+    if (statusCode === 400 && error.details) {
+      response.details = error.details;
     }
 
-    // ✅ Check for existing user by name or phone number
-    const exists = await formExists({ name, phone_number });
-    if (exists) {
-      return res.status(409).json({ message: 'Form with this name or phone number already exists' });
-    }
-
-    const form = await createFormService({ name, phone_number, email });
-    res.status(201).json(form);
-  } catch (error) {
-    console.error('Error creating form:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(statusCode).json(response);
   }
-};
+}
 
-const getForms = async (req, res) => {
-  try {
-    const forms = await getAllFormsService();
-    res.status(200).json(forms);
-  } catch (error) {
-    console.error('Error fetching forms:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-module.exports = {
-  createForm,
-  getForms,
-};
+module.exports = FormController;
