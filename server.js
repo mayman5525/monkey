@@ -20,6 +20,18 @@ app.use(
   })
 );
 
+function middleware(req, res, next) {
+  console.log("middleware called");
+  next();
+}
+function standardExpressCallBck(req, res, next) {
+  res.send("hello world from the standard callback");
+}
+function middleware2() {
+  console.log("middleware2 called");
+}
+app.get("/", middleware, middleware2, standardExpressCallBck);
+app.get("/test",middleware,standardExpressCallBck)
 // Logging middleware
 app.use(
   morgan("combined", {
@@ -70,6 +82,7 @@ process.on("SIGINT", () => {
   logger.info("SIGINT received, shutting down gracefully");
   process.exit(0);
 });
+
 
 (async () => {
   await initDb();

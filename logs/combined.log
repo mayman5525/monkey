@@ -68,3 +68,58 @@
 {"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-24T04:43:51.903Z"}
 {"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-24T04:43:52.102Z"}
 {"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-24T04:43:53.788Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T10:54:05.310Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T10:54:05.960Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T10:54:32.266Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T10:54:32.673Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T10:54:34.984Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T10:54:35.304Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T10:54:59.198Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T10:54:59.502Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T10:55:04.975Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T10:55:05.352Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T10:55:09.483Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T10:55:09.711Z"}
+{"level":"info","message":"::1 - - [29/Jul/2025:10:55:20 +0000] \"GET /favicon.ico HTTP/1.1\" 404 150 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0\"","service":"form-api","timestamp":"2025-07-29T10:55:20.217Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:04:22.641Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:04:22.904Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:04:40.154Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:04:40.520Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:08:19.777Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:08:20.111Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:09:25.929Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:09:26.514Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:09:30.034Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:09:36.168Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:09:36.509Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:09:44.225Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:09:44.511Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:09:47.810Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:09:48.117Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:10:13.095Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:10:13.409Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:10:22.036Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:10:23.170Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:37:03.995Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:37:04.332Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:37:18.593Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:37:18.943Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:37:23.931Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:37:24.230Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:37:28.757Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:37:29.246Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:37:32.089Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:37:32.221Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:37:45.958Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:37:46.144Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:41:25.114Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:41:25.665Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-07-29T11:55:40.260Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-29T11:55:40.642Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-07-29T11:55:51.975Z"}
+{"code":"ENOTFOUND","errno":-3008,"hostname":"dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com","level":"error","message":"Database connection failed: getaddrinfo ENOTFOUND dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com","service":"form-api","stack":"Error: getaddrinfo ENOTFOUND dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"getaddrinfo","timestamp":"2025-07-30T02:16:17.457Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-07-30T02:16:18.963Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-10T22:27:55.723Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-10T22:30:15.713Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-10T22:30:16.025Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-08-10T22:30:38.985Z"}

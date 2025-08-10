@@ -27,7 +27,13 @@ CREATE TABLE IF NOT EXISTS forms (
     phone_number BIGINT NOT NULL,
     email TEXT
 );
-
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS password_hash TEXT,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW(),
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW(),
+ADD COLUMN IF NOT EXISTS google_id TEXT,
+ADD COLUMN IF NOT EXISTS reset_code TEXT,
+ADD COLUMN IF NOT EXISTS reset_code_expiry TIMESTAMP;
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -44,5 +50,16 @@ BEGIN
         WHERE table_name='forms' AND column_name='updated_at'
     ) THEN
         ALTER TABLE forms ADD COLUMN updated_at TIMESTAMP DEFAULT NOW();
+    END IF;
+END $$;
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns
+        WHERE table_name='users' 
+        AND column_name='number_of_points'
+    ) THEN 
+        ALTER TABLE users ADD COLUMN number_of_points INTEGER DEFAULT 0;
     END IF;
 END $$;
