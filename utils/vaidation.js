@@ -22,9 +22,12 @@ function validateFormData(data) {
   if (email && !validator.isEmail(email)) {
     errors.push("Email must be a valid email address");
   }
-  if (messages && typeof messages != "string") {
+
+  // Messages validation (optional)
+  if (messages && typeof messages !== "string") {
     errors.push("Messages must be a string");
   }
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -40,6 +43,8 @@ function sanitizeFormData(data) {
     email: data.email
       ? validator.normalizeEmail(data.email.toLowerCase().trim())
       : null,
+    // Add the missing messages field
+    messages: data.messages ? validator.escape(data.messages.trim()) : null,
   };
 }
 

@@ -135,3 +135,31 @@
 {"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T14:43:33.646Z"}
 {"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T14:43:34.039Z"}
 {"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-08-15T14:43:37.822Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T15:05:57.296Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T15:05:57.685Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T15:06:53.904Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T15:06:54.330Z"}
+{"level":"error","message":"Error creating form: Form with this name or phone number already exists","service":"form-api","stack":"Error: Form with this name or phone number already exists\n    at FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:20:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":409,"timestamp":"2025-08-15T15:07:29.047Z"}
+{"level":"info","message":"::1 - - [15/Aug/2025:15:07:29 +0000] \"POST /api/forms HTTP/1.1\" 409 80 \"-\" \"PostmanRuntime/7.45.0\"","service":"form-api","timestamp":"2025-08-15T15:07:29.059Z"}
+{"level":"error","message":"Error creating form: Form with this name or phone number already exists","service":"form-api","stack":"Error: Form with this name or phone number already exists\n    at FormService.createForm (D:\\pr\\monkey\\monkey\\services\\formService.js:20:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async createForm (D:\\pr\\monkey\\monkey\\controller\\formController.js:8:23)","statusCode":409,"timestamp":"2025-08-15T15:07:35.624Z"}
+{"level":"info","message":"::1 - - [15/Aug/2025:15:07:35 +0000] \"POST /api/forms HTTP/1.1\" 409 80 \"-\" \"PostmanRuntime/7.45.0\"","service":"form-api","timestamp":"2025-08-15T15:07:35.630Z"}
+{"level":"info","message":"New form created with ID: 416","service":"form-api","timestamp":"2025-08-15T15:07:40.986Z"}
+{"level":"info","message":"::1 - - [15/Aug/2025:15:07:41 +0000] \"POST /api/forms HTTP/1.1\" 201 242 \"-\" \"PostmanRuntime/7.45.0\"","service":"form-api","timestamp":"2025-08-15T15:07:41.005Z"}
+{"level":"info","message":"::1 - - [15/Aug/2025:15:08:33 +0000] \"POST /api/forms HTTP/1.1\" 400 110 \"-\" \"PostmanRuntime/7.45.0\"","service":"form-api","timestamp":"2025-08-15T15:08:33.381Z"}
+{"level":"info","message":"New form created with ID: 417","service":"form-api","timestamp":"2025-08-15T15:08:42.684Z"}
+{"level":"info","message":"::1 - - [15/Aug/2025:15:08:42 +0000] \"POST /api/forms HTTP/1.1\" 201 244 \"-\" \"PostmanRuntime/7.45.0\"","service":"form-api","timestamp":"2025-08-15T15:08:42.704Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T15:09:31.913Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T15:09:32.852Z"}
+{"level":"info","message":"New form created with ID: 418","service":"form-api","timestamp":"2025-08-15T15:09:47.434Z"}
+{"level":"info","message":"::1 - - [15/Aug/2025:15:09:47 +0000] \"POST /api/forms HTTP/1.1\" 201 244 \"-\" \"PostmanRuntime/7.45.0\"","service":"form-api","timestamp":"2025-08-15T15:09:47.451Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T15:10:29.853Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T15:10:30.274Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T15:13:23.724Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T15:13:24.255Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T15:49:47.970Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T15:49:48.053Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-08-15T23:21:41.011Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-08-15T23:21:41.503Z"}
+{"level":"info","message":"New form created with ID: 427","service":"form-api","timestamp":"2025-08-15T23:21:51.141Z"}
+{"level":"info","message":"::1 - - [15/Aug/2025:23:21:51 +0000] \"POST /api/forms HTTP/1.1\" 201 280 \"-\" \"PostmanRuntime/7.45.0\"","service":"form-api","timestamp":"2025-08-15T23:21:51.149Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-08-15T23:22:00.599Z"}
