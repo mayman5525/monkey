@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const formRoutes = require("./router/form");
 const logger = require("./utils/logger");
 const nodemon = require("nodemon");
 const initDb = require("./utils/initDB");
@@ -11,6 +10,9 @@ const initDb = require("./utils/initDB");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+const formRoutes = require("./router/form");
+const userRoutes = require("./router/users")
 // Security middleware
 app.use(helmet());
 app.use(
@@ -20,18 +22,18 @@ app.use(
   })
 );
 
-function middleware(req, res, next) {
-  console.log("middleware called");
-  next();
-}
-function standardExpressCallBck(req, res, next) {
-  res.send("hello world from the standard callback");
-}
-function middleware2() {
-  console.log("middleware2 called");
-}
-app.get("/", middleware, middleware2, standardExpressCallBck);
-app.get("/test",middleware,standardExpressCallBck)
+// function middleware(req, res, next) {
+//   console.log("middleware called");
+//   next();
+// }
+// function standardExpressCallBck(req, res, next) {
+//   res.send("hello world from the standard callback");
+// }
+// function middleware2() {
+//   console.log("middleware2 called");
+// }
+// app.get("/", middleware, middleware2, standardExpressCallBck);
+// app.get("/test",middleware,standardExpressCallBck)
 // Logging middleware
 app.use(
   morgan("combined", {
@@ -54,6 +56,7 @@ app.get("/health", (req, res) => {
 
 // API routes
 app.use("/api/forms", formRoutes);
+app.use("/api/user",userRoutes)
 
 // // 404 handler
 // app.all('*', (req, res) => {
@@ -62,6 +65,12 @@ app.use("/api/forms", formRoutes);
 //     message: 'Route not found'
 //   });
 // });
+
+// /api/user/signup
+// /api/user/login
+// /api/user/reset-password
+// /api/user/request-reset-code
+// /api/user/reset-password-with-code
 
 // Global error handler
 app.use((error, req, res, next) => {
