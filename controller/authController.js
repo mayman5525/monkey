@@ -28,7 +28,7 @@ async function createTransporter() {
 }
 exports.signup = async (req, res) => {
   try {
-    const { user_id, user_name, user_email, user_number, password } = req.body;
+    const { user_name, user_email, user_number, password } = req.body;
 
     const existingUser = await findUserByEmail(user_email);
     if (existingUser) {
@@ -37,7 +37,6 @@ exports.signup = async (req, res) => {
 
     // Create user
     const newUser = await createUser({
-      user_id,
       user_name,
       user_email,
       user_number,
@@ -72,7 +71,7 @@ exports.signin = async (req, res) => {
     // 3. Generate JWT
     const token = jwt.sign(
       { id: user.id, email: user.user_email },
-      process.env.JWT_SECRET || "supersecretkey",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 

@@ -10,9 +10,8 @@ const initDb = require("./utils/initDB");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
 const formRoutes = require("./router/form");
-const userRoutes = require("./router/users")
+const userRoutes = require("./router/users");
 // Security middleware
 app.use(helmet());
 app.use(
@@ -56,7 +55,7 @@ app.get("/health", (req, res) => {
 
 // API routes
 app.use("/api/forms", formRoutes);
-app.use("/api/user",userRoutes)
+app.use("/api/user", userRoutes);
 
 // // 404 handler
 // app.all('*', (req, res) => {
@@ -91,7 +90,6 @@ process.on("SIGINT", () => {
   logger.info("SIGINT received, shutting down gracefully");
   process.exit(0);
 });
-
 
 (async () => {
   await initDb();
