@@ -14,12 +14,7 @@ const formRoutes = require("./router/form");
 const userRoutes = require("./router/users");
 // Security middleware
 app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
-    credentials: true,
-  })
-);
+app.use(cors({ origin: "*" }));
 
 // function middleware(req, res, next) {
 //   console.log("middleware called");
