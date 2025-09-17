@@ -20,6 +20,12 @@ const initDb = async () => {
     console.error("❌ Failed to initialize database schema:", err);
     process.exit(1);
   }
+
+  try {
+    
+  } catch (error) {
+    
+  }
 };
 
 module.exports = initDb;

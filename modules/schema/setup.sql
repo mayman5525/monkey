@@ -78,3 +78,58 @@ BEGIN
         ALTER TABLE users ADD COLUMN number_of_points INTEGER DEFAULT 0;
     END IF;
 END $$;
+
+
+CREATE TABLE IF NOT EXISTS orders (
+    order_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    order_status TEXT DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS category (
+    category_id SERIAL PRIMARY KEY,
+    category_name TEXT NOT NULL UNIQUE, -- Added UNIQUE
+    description TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- PRODUCT TABLE
+CREATE TABLE IF NOT EXISTS product (
+    product_id SERIAL PRIMARY KEY,
+    product_name TEXT NOT NULL,
+    product_components TEXT,
+    product_price NUMERIC NOT NULL,
+    product_category TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (product_category) REFERENCES category(category_name)
+);
+-- EXTRAS TABLE
+CREATE TABLE IF NOT EXISTS extras (
+    extra_id SERIAL PRIMARY KEY,
+    extra_name TEXT NOT NULL,
+    extra_description TEXT,
+    extra_price NUMERIC NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ORDER_ITEMS TABLE
+CREATE TABLE IF NOT EXISTS order_items (
+    order_item_id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES orders(order_id),
+    product_id INTEGER REFERENCES product(product_id),
+    quantity INTEGER NOT NULL,
+    product_price NUMERIC NOT NULL,
+    total_price NUMERIC NOT NULL
+);
+
+-- ORDER_ITEM_EXTRAS TABLE
+CREATE TABLE IF NOT EXISTS order_item_extras (
+    order_item_extra_id SERIAL PRIMARY KEY,
+    order_item_id INTEGER REFERENCES order_items(order_item_id),
+    extra_id INTEGER REFERENCES extras(extra_id),
+    extra_price NUMERIC NOT NULL
+);
