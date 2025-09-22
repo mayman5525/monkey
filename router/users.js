@@ -8,6 +8,6 @@ router.post("/signin", authController.signin);
 router.post("/request-reset-code", authController.requestPasswordResetCode);
 router.post("/verify-reset-code", authController.verifyResetCode);
 router.post("/reset-password-with-code", authController.resetPasswordWithCode);
-router.get("/all", userModule.getAllUsers);
+router.get("/all", authController.get_users);
 
 module.exports = router;

@@ -1,4 +1,8 @@
-const { createUser, findUserByEmail } = require("../modules/userModule");
+const {
+  createUser,
+  findUserByEmail,
+  getAllUsers,
+} = require("../modules/userModule");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -90,7 +94,22 @@ exports.signin = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+exports.get_users = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
 
+    res.status(200).json({
+      message: "Users fetched successfully",
+      users,
+    });
+  } catch (error) {
+    console.error("Get Users Error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 exports.googleSignin = async (req, res) => {
   try {
     const { token } = req.body; // Google ID token from frontend

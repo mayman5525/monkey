@@ -1,13 +1,22 @@
 const express = require("express");
 const productController = require("../controller/productController");
 const router = express.Router();
+const { upload } = require("../utils/cloudinary");
 
 router.get("/", productController.getAllProducts);
 router.get("/:id", productController.getProductById);
 router.get("/search", productController.searchProducts);
 router.get("/category/:category", productController.gerProductByCategory);
-router.post("/", productController.createProduct);
-router.put("/:id", productController.updateProduct);
+router.post(
+  "/",
+  upload.single("product_photo"),
+  productController.createProduct
+);
+router.put(
+  "/:id",
+  upload.single("product_photo"),
+  productController.updateProduct
+);
 router.delete("/:id", productController.deleteProduct);
 
 module.exports = router;

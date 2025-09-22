@@ -1,3 +1,4 @@
+const { get_users } = require("../controller/authController");
 const pool = require("./db");
 const bcrypt = require("bcrypt");
 
@@ -19,13 +20,20 @@ async function findUserByEmail(email) {
   const res = await pool.query(`SELECT * FROM users WHERE user_email = $1`, [
     email,
   ]);
-  
+
   return res.rows[0];
 }
 
 async function getAllUsers() {
   const res = await pool.query("SELECT * FROM users");
-  return res.rows;
+  return res.rows.map((user) => ({
+    id: user.id,
+    user_name: user.user_name,
+    user_email: user.user_email,
+    user_number: user.user_number,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+  }));
 }
 async function get_user_points(user_id) {
   const res = await pool.query(
@@ -34,4 +42,10 @@ async function get_user_points(user_id) {
   return res.rows;
 }
 
-module.exports = { createUser, findUserByEmail, get_user_points, getAllUsers };
+module.exports = {
+  createUser,
+  findUserByEmail,
+  get_user_points,
+  getAllUsers,
+  get_users,
+};

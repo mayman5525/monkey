@@ -52,6 +52,8 @@ app.get("/health", (req, res) => {
 app.use("/api/forms", formRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/products", require("./router/products"));
+app.use("/api/extras", require("./router/extras"));
+app.use("/api/orders", require("./router/order"));
 // app.use("/api/categories", require("./router/category"));
 // app.use("/api/orders", require("./router/order"));
 

@@ -1,4 +1,5 @@
 const productModel = require("../modules/product_model");
+const { upload, uploadProductPhoto } = require("../utils/cloudinary");
 class productController {
   static async getAllProducts(req, res) {
     try {
@@ -62,7 +63,11 @@ class productController {
   static async createProduct(req, res) {
     try {
       const productData = req.body;
-      // Validate required fields and price type
+      // Check if a file is uploaded
+      if (req.file) {
+        productData.product_photo = await uploadProductPhoto(req.file);
+      }
+
       if (
         !productData.product_name ||
         !productData.price ||
@@ -74,6 +79,11 @@ class productController {
             "Missing or invalid required fields: product_name, price, category",
         });
       }
+
+      // Ensure is_featured is a boolean
+      productData.is_featured =
+        productData.is_featured === true || productData.is_featured === "true";
+
       const newProduct = await productModel.createProduct(productData);
       res.status(201).json({
         message: "Product created successfully",
@@ -82,17 +92,14 @@ class productController {
     } catch (error) {
       console.error("Error creating product:", error);
       if (error.code === "23503") {
-        // PostgreSQL foreign key violation
         return res
           .status(400)
           .json({ error: "Invalid category: category does not exist" });
       }
       if (error.code === "42P01") {
-        // PostgreSQL relation does not exist
         return res.status(500).json({ error: "Database table does not exist" });
       }
       if (error.code === "42703") {
-        // PostgreSQL column does not exist
         return res
           .status(500)
           .json({ error: "Database column does not exist" });
@@ -106,12 +113,43 @@ class productController {
     try {
       const { id } = req.params;
       const updatedData = req.body;
+
+      // Check if a file is uploaded for update
+      if (req.file) {
+        updatedData.product_photo = await uploadProductPhoto(req.file);
+      }
+
+      if (
+        !updatedData.product_name ||
+        !updatedData.price ||
+        isNaN(updatedData.price) ||
+        !updatedData.category
+      ) {
+        return res.status(400).json({
+          error:
+            "Missing or invalid required fields: product_name, price, category",
+        });
+      }
+
       const updatedProduct = await productModel.updateProduct(id, updatedData);
+      if (!updatedProduct) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
       res.status(200).json({
-        message: `Product with ID ${id} updated successfully`,
+        message: "Product updated successfully",
         product: updatedProduct,
       });
     } catch (error) {
+      console.error("Error updating product:", error);
+      if (error.code === "23503") {
+        return res
+          .status(400)
+          .json({ error: "Invalid category: category does not exist" });
+      }
+      if (error.message === "Product not found") {
+        return res.status(404).json({ error: "Product not found" });
+      }
       res
         .status(500)
         .json({ error: "An error occurred while updating the product" });
