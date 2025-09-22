@@ -1,7 +1,8 @@
 {
   "dependencies": {
+    "@fluidjs/multer-cloudinary": "^1.0.4",
     "bcrypt": "^6.0.0",
-    "cloudinary": "^1.41.3",
+    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
