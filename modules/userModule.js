@@ -28,9 +28,9 @@ async function getAllUsers() {
   const res = await pool.query("SELECT * FROM users");
   return res.rows.map((user) => ({
     id: user.id,
-    user_name: user.user_name,
-    user_email: user.user_email,
-    user_number: user.user_number,
+    name: user.user_name,
+    email: user.user_email,
+    number: user.user_number,
     created_at: user.created_at,
     updated_at: user.updated_at,
   }));

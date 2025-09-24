@@ -91,6 +91,7 @@ exports.signin = async (req, res) => {
         id: user.id,
         name: user.user_name,
         email: user.user_email,
+        number: user.user_number,
         role: user.is_admin ? "admin" : "user",
       },
     });
