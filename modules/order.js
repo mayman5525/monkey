@@ -374,6 +374,115 @@ class OrderModel {
       throw error;
     }
   }
+    static async getAllOrdersForAdmin() {
+    try {
+      const res = await pool.query(
+        `SELECT 
+          o.order_id,
+          o.order_status,
+          o.created_at,
+          o.updated_at,
+          o.total_price,
+          o.points_earned,
+          o.points_redeemed,
+          o.order_code,
+          u.id AS user_id,
+          u.user_name,
+          u.user_email,
+          u.user_number,
+          json_agg(
+            json_build_object(
+              'order_item_id', oi.order_item_id,
+              'product_id', p.product_id,
+              'product_name', p.product_name,
+              'product_category', p.product_category,
+              'quantity', oi.quantity,
+              'product_price', oi.product_price,
+              'item_total', oi.total_price,
+              'extras', (
+                SELECT json_agg(
+                  json_build_object(
+                    'extra_id', e.extra_id,
+                    'extra_name', e.extra_name,
+                    'extra_price', oie.extra_price
+                  )
+                )
+                FROM order_item_extras oie
+                JOIN extras e ON oie.extra_id = e.extra_id
+                WHERE oie.order_item_id = oi.order_item_id
+              )
+            )
+          ) AS items,
+          COALESCE(SUM(oi.total_price), 0) AS items_subtotal,
+          (SELECT COALESCE(SUM(oie.extra_price), 0)
+           FROM order_item_extras oie
+           JOIN order_items oi2 ON oie.order_item_id = oi2.order_item_id
+           WHERE oi2.order_id = o.order_id) AS extras_subtotal
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        LEFT JOIN order_items oi ON o.order_id = oi.order_id
+        LEFT JOIN product p ON oi.product_id = p.product_id
+        GROUP BY o.order_id, u.id, u.user_name, u.user_email, u.user_number`)
+        return res.rows; // Return array of all orders
+    } catch (error) {
+      console.error("Error fetching all orders for admin:", error.message);
+      throw error;
+    }
+  }
+  static async getAllOrdersForUser(userId) {
+    try {
+      const res = await pool.query(
+        `SELECT 
+          o.order_id,
+          o.order_status,
+          o.created_at,
+          o.updated_at,
+          o.total_price,
+          o.points_earned,
+          o.points_redeemed,
+          o.order_code,
+          json_agg(
+            json_build_object(
+              'order_item_id', oi.order_item_id,
+              'product_id', p.product_id,
+              'product_name', p.product_name,
+              'product_category', p.product_category,
+              'quantity', oi.quantity,
+              'product_price', oi.product_price,
+              'item_total', oi.total_price,
+              'extras', (
+                SELECT json_agg(
+                  json_build_object(
+                    'extra_id', e.extra_id,
+                    'extra_name', e.extra_name,
+                    'extra_price', oie.extra_price
+                  )
+                )
+                FROM order_item_extras oie
+                JOIN extras e ON oie.extra_id = e.extra_id
+                WHERE oie.order_item_id = oi.order_item_id
+              )
+            ) 
+          ) AS items,
+          COALESCE(SUM(oi.total_price), 0) AS items_subtotal,
+          (SELECT COALESCE(SUM(oie.extra_price), 0)
+            FROM order_item_extras oie
+            JOIN order_items oi2 ON oie.order_item_id = oi2.order_item_id
+            WHERE oi2.order_id = o.order_id) AS extras_subtotal
+        FROM orders o
+        LEFT JOIN order_items oi ON o.order_id = oi.order_id
+        LEFT JOIN product p ON oi.product_id = p.product_id
+        WHERE o.user_id = $1
+        GROUP BY o.order_id`,
+        [userId]
+      );
+      return res.rows; // Return array of user's orders
+    } catch (error) {
+      console.error("Error fetching all orders for user:", error.message);      
+      throw error;
+    }
+  }
+  
 }
 
 module.exports = OrderModel;

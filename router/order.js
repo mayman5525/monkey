@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const OrderController = require("../controller/orderController");
-const adminMiddleware = require("../utils/admin"); // Middleware for admin access
+// const adminMiddleware = require("../utils/admin"); // Middleware for admin access
 
 // Checkout order
 router.post("/checkout", OrderController.checkoutOrder);
 
 // Get order details by order_id (admin)
-router.get("/:orderId/details", adminMiddleware, OrderController.getOrderDetails);
+router.get("/:orderId/details", OrderController.getOrderDetails);
 
 // Get order details by order_code (admin)
-router.get("/code/:orderCode/details", adminMiddleware, OrderController.getOrderDetailsByCode);
+router.get("/code/:orderCode/details", OrderController.getOrderDetailsByCode);
 
 // Get order elements by order_id
 router.get("/:orderId", OrderController.getOrder);
@@ -22,7 +22,7 @@ router.get("/code/:orderCode", OrderController.getOrderByCode);
 router.get("/search", OrderController.searchOrdersByCode);
 
 // Get all orders (admin)
-router.get("/", adminMiddleware, OrderController.getAllOrdersForAdmin);
+router.get("/", OrderController.getAllOrdersForAdmin);
 
 // Get all orders for authenticated user
 router.get("/user", OrderController.getAllOrdersForUser);
