@@ -42,10 +42,19 @@ async function get_user_points(user_id) {
   return res.rows;
 }
 
+async function get_user_details_all(user_id) {
+  const res = await pool.query(
+    "SELECT get_user_full_details($1) AS user_data",
+    [user_id]
+  );
+  return res.rows[0].user_data;
+}
+
 module.exports = {
   createUser,
   findUserByEmail,
   get_user_points,
   getAllUsers,
   get_users,
+  get_user_details_all,
 };

@@ -2,6 +2,8 @@ const {
   createUser,
   findUserByEmail,
   getAllUsers,
+  get_user_points,
+  get_user_details_all,
 } = require("../modules/userModule");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -261,6 +263,25 @@ exports.resetPasswordWithCode = async (req, res) => {
     res.json({ message: "Password reset successful" });
   } catch (error) {
     console.error("Reset Password With Code Error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+exports.get_user_details = async (req, res) => {
+  try {
+    const user_id = req.params.id;
+    const user_details = await get_user_details_all(user_id);
+
+    if (!user_details) {
+      return res.status(404).json({ message: "user not found" });
+    }
+
+    res.status(200).json({
+      message: "user details fetched successfully",
+
+      user_details,
+    });
+  } catch (error) {
+    console.error("Get user details error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
