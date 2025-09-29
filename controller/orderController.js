@@ -77,7 +77,7 @@ class OrderController {
   // Get all orders for admin dashboard (summary view)
   static async getAllOrdersForAdmin(req, res) {
     try {
-      const orders = await OrderModel.getAllOrders();
+      const orders = await OrderModel.getAllOrdersForAdmin();
       res.status(200).json(orders);
     } catch (error) {
       console.error("Error in getAllOrdersForAdmin:", error.message);
