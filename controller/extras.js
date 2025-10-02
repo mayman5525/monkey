@@ -20,5 +20,13 @@ class ExtraClass {
         );
         return res.rows[0];
     }
+    async getExtraById(extraId, client) {
+        const res = await client.query('SELECT * FROM extras WHERE extra_id = $1', [extraId]);
+        return res.rows[0];
+    }
+    async updateExtra(extraId, extraName, extraPrice, client) {
+        const res = await client.query('UPDATE extras SET extra_name = $1, extra_price = $2, updated_at = NOW() WHERE extra_id = $3 RETURNING *', [extraName, extraPrice, extraId]);
+        return res.rows[0];
+    }
 }
 module.exports = ExtraClass;

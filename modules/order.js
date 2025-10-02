@@ -88,7 +88,110 @@ class OrderModel {
       client.release();
     }
   }
+  static async completeOrder(orderId) {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
 
+      // Get order details
+      const orderRes = await client.query(
+        `SELECT order_id, user_id, order_status, total_price, points_earned, points_redeemed
+         FROM orders 
+         WHERE order_id = $1`,
+        [orderId]
+      );
+
+      if (orderRes.rows.length === 0) {
+        throw new Error("Order not found");
+      }
+
+      const order = orderRes.rows[0];
+
+      // Check if order is already completed
+      if (order.order_status === "completed") {
+        throw new Error("Order is already completed");
+      }
+
+      // Check if order is pending
+      if (order.order_status !== "pending") {
+        throw new Error(
+          `Cannot complete order with status: ${order.order_status}`
+        );
+      }
+
+      // Update order status to completed
+      await client.query(
+        `UPDATE orders 
+         SET order_status = 'completed', 
+             updated_at = NOW()
+         WHERE order_id = $1`,
+        [orderId]
+      );
+
+      // Update user metrics
+      const userMetrics = await client.query(
+        `SELECT 
+           COUNT(*) FILTER (WHERE order_status = 'completed') as completed_orders,
+           COALESCE(SUM(total_price) FILTER (WHERE order_status = 'completed'), 0) as total_spent,
+           COALESCE(SUM(points_earned) FILTER (WHERE order_status = 'completed'), 0) as total_points_earned,
+           COALESCE(SUM(points_redeemed) FILTER (WHERE order_status = 'completed'), 0) as total_points_redeemed
+         FROM orders 
+         WHERE user_id = $1`,
+        [order.user_id]
+      );
+
+      const metrics = userMetrics.rows[0];
+      const completedOrders = parseInt(metrics.completed_orders);
+      const totalSpent = parseFloat(metrics.total_spent);
+      const avgOrderValue =
+        completedOrders > 0 ? totalSpent / completedOrders : 0;
+
+      // Update user table with recalculated metrics
+      await client.query(
+        `UPDATE users 
+         SET total_orders = $1,
+             total_spent = $2,
+             avg_order_value = $3,
+             last_purchase_date = NOW(),
+             points = points + $4 - COALESCE((
+               SELECT points_earned - points_redeemed 
+               FROM orders 
+               WHERE order_id = $5
+             ), 0),
+             points_redeemed = points_redeemed + $6,
+             has_points = TRUE,
+             updated_at = NOW()
+         WHERE id = $7`,
+        [
+          completedOrders,
+          totalSpent,
+          avgOrderValue,
+          order.points_earned,
+          orderId,
+          order.points_redeemed,
+          order.user_id,
+        ]
+      );
+
+      await client.query("COMMIT");
+
+      // Fetch updated order
+      const updatedOrder = await pool.query(
+        `SELECT order_id, order_code, order_status, total_price, points_earned, points_redeemed, updated_at
+         FROM orders 
+         WHERE order_id = $1`,
+        [orderId]
+      );
+
+      return updatedOrder.rows[0];
+    } catch (error) {
+      await client.query("ROLLBACK");
+      console.error("Error completing order:", error.message);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
   // Get comprehensive order details (for admin dashboard)
   static async getOrderDetails(orderId) {
     try {
@@ -206,7 +309,7 @@ class OrderModel {
     }
   }
 
-    static async getOrderByCode(orderCode) {
+  static async getOrderByCode(orderCode) {
     try {
       const res = await pool.query(
         `SELECT 
@@ -263,7 +366,7 @@ class OrderModel {
       throw error;
     }
   }
-    static async getOrderDetailsByCode(orderCode) {
+  static async getOrderDetailsByCode(orderCode) {
     try {
       const res = await pool.query(
         `SELECT 
@@ -320,7 +423,7 @@ class OrderModel {
     }
   }
 
-    static async searchOrdersByCode(searchTerm) {
+  static async searchOrdersByCode(searchTerm) {
     try {
       const res = await pool.query(
         `SELECT 
@@ -374,7 +477,7 @@ class OrderModel {
       throw error;
     }
   }
-    static async getAllOrdersForAdmin() {
+  static async getAllOrdersForAdmin() {
     try {
       const res = await pool.query(
         `SELECT 
@@ -422,8 +525,9 @@ class OrderModel {
         JOIN users u ON o.user_id = u.id
         LEFT JOIN order_items oi ON o.order_id = oi.order_id
         LEFT JOIN product p ON oi.product_id = p.product_id
-        GROUP BY o.order_id, u.id, u.user_name, u.user_email, u.user_number`)
-        return res.rows; // Return array of all orders
+        GROUP BY o.order_id, u.id, u.user_name, u.user_email, u.user_number`
+      );
+      return res.rows; // Return array of all orders
     } catch (error) {
       console.error("Error fetching all orders for admin:", error.message);
       throw error;
@@ -478,11 +582,10 @@ class OrderModel {
       );
       return res.rows; // Return array of user's orders
     } catch (error) {
-      console.error("Error fetching all orders for user:", error.message);      
+      console.error("Error fetching all orders for user:", error.message);
       throw error;
     }
   }
-  
 }
 
 module.exports = OrderModel;

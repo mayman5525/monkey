@@ -1,4 +1,3 @@
-
 const OrderModel = require("../modules/order");
 
 class OrderController {
@@ -7,11 +6,9 @@ class OrderController {
     try {
       const { user_id, items } = req.body;
       if (!user_id || !items || !Array.isArray(items)) {
-        return res
-          .status(400)
-          .json({
-            error: "Invalid input: user_id and items array are required",
-          });
+        return res.status(400).json({
+          error: "Invalid input: user_id and items array are required",
+        });
       }
       const order = await OrderModel.checkoutOrder({ user_id, items });
       res.status(201).json({
@@ -22,6 +19,16 @@ class OrderController {
       });
     } catch (error) {
       console.error("Error in checkoutOrder:", error.message);
+      res.status(400).json({ error: error.message });
+    }
+  }
+  static async completeOrder(req, res) {
+    try {
+      const orderId = req.params.orderId;
+      await OrderModel.completeOrder(orderId);
+      res.status(200).json({ message: "Order completed successfully" });
+    } catch (error) {
+      console.error("Error in completeOrder:", error.message);
       res.status(400).json({ error: error.message });
     }
   }

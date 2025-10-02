@@ -203,12 +203,9 @@ BEGIN
           FROM orders o4
           WHERE o4.user_id = u.id
           ORDER BY o4.created_at DESC
-          LIMIT 5
+          LIMIT 2
         ) sub_orders
       ),
-      'last_visit', u.last_visit,
-      'preferred_categories', COALESCE(u.preferred_categories, ARRAY[]::text[]),
-      'preferred_extras', COALESCE(u.preferred_extras, ARRAY[]::text[]),
       'points_balance', COALESCE(u.points,0),
       'points_redeemed', COALESCE(u.points_redeemed,0),
       'has_points', COALESCE(u.has_points,FALSE)

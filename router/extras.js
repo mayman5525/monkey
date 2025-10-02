@@ -61,4 +61,46 @@ router.delete("/:extraId", async (req, res) => {
       .json({ error: "An error occurred while deleting the extra" });
   }
 });
+router.get("/:extraId", async (req, res) => {
+  try {
+    const extraId = parseInt(req.params.extraId, 10);
+    if (isNaN(extraId)) {
+      return res.status(400).json({ error: "Invalid extraId" });
+    }
+    const client = await pool.connect();
+    const extra = await extraController.getExtraById(extraId, client);
+    client.release();
+    if (!extra) {
+      return res.status(404).json({ error: "Extra not found" });
+    }
+    res.status(200).json(extra);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the extra" });
+  }
+  router.put("/:extraId", async (req, res) => {
+    const client = await pool.connect();
+    const extraId = parseInt(req.params.extraId, 10);
+    const { extraName, extraPrice } = req.body;
+    if (isNaN(extraId) || !extraName || !extraPrice) {
+      client.release();
+      return res
+        .status(400)
+        .json({ error: "Invalid extraId, extraName, or extraPrice" });
+    }
+    const updatedExtra = await extraController.updateExtra(
+      extraId,
+      extraName,
+      extraPrice,
+      client
+    );
+    client.release();
+    if (!updatedExtra) {
+      return res.status(404).json({ error: "Extra not found" });
+    }
+    res.status(200).json(updatedExtra);
+  });
+});
+
 module.exports = router;

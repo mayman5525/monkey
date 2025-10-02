@@ -8,6 +8,7 @@ router.post("/checkout", OrderController.checkoutOrder);
 
 // Get order details by order_id (admin)
 router.get("/:orderId/details", OrderController.getOrderDetails);
+router.post("/:orderId/complete",OrderController.completeOrder);
 
 // Get order details by order_code (admin)
 router.get("/code/:orderCode/details", OrderController.getOrderDetailsByCode);
