@@ -27,5 +27,5 @@ router.get("/", OrderController.getAllOrdersForAdmin);
 
 // Get all orders for authenticated user
 router.get("/user", OrderController.getAllOrdersForUser);
-
+router.post("/:orderId/discount", OrderController.applyDiscount);
 module.exports = router;

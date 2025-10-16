@@ -33,6 +33,22 @@ class OrderController {
     }
   }
 
+  static async applyDiscount(req, res) {
+    const { orderId } = req.params;
+    const { discount_value } = req.body;
+
+    try {
+      const result = await OrderModel.applyDiscountToOrder(
+        orderId,
+        discount_value
+      );
+      res.status(200).json(result);
+    } catch (err) {
+      console.error("Apply discount error:", err.message);
+      res.status(400).json({ error: err.message });
+    }
+  }
+
   // Get comprehensive order details by order_id (admin dashboard)
   static async getOrderDetails(req, res) {
     try {

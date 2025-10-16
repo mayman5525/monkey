@@ -7,15 +7,13 @@ class OrderModel {
     try {
       await client.query("BEGIN");
 
-      // Validate user_id
+      // Validate user
       const userRes = await client.query(`SELECT id FROM users WHERE id = $1`, [
         user_id,
       ]);
-      if (userRes.rows.length === 0) {
-        throw new Error("User not found");
-      }
+      if (userRes.rows.length === 0) throw new Error("User not found");
 
-      // Create new order
+      // Create order
       const orderRes = await client.query(
         `INSERT INTO orders (user_id, order_status, created_at, updated_at, points_earned, points_redeemed)
        VALUES ($1, 'pending', NOW(), NOW(), 0, 0)
@@ -24,60 +22,77 @@ class OrderModel {
       );
       const { order_id: orderId, order_code: orderCode } = orderRes.rows[0];
 
-      // Add items and extras
+      // Add items
       for (const item of items) {
-        // Validate product_id
-        const productRes = await client.query(
-          `SELECT product_price FROM product WHERE product_id = $1`,
-          [item.product_id]
-        );
-        if (productRes.rows.length === 0) {
-          throw new Error(`Product ${item.product_id} not found`);
-        }
-        const productPrice = productRes.rows[0].product_price;
-        const itemTotal = productPrice * item.quantity;
+        let itemPrice, itemTotal;
 
-        // Insert order_item
+        if (item.type === "product") {
+          const productRes = await client.query(
+            `SELECT product_price FROM product WHERE product_id = $1`,
+            [item.product_id]
+          );
+          if (productRes.rows.length === 0)
+            throw new Error(`Product ${item.product_id} not found`);
+          itemPrice = parseFloat(productRes.rows[0].product_price);
+        } else if (item.type === "merchant") {
+          const merchantRes = await client.query(
+            `SELECT merchant_price FROM merchant WHERE merchant_id = $1`,
+            [item.merchant_id]
+          );
+          if (merchantRes.rows.length === 0)
+            throw new Error(`Merchant ${item.merchant_id} not found`);
+          itemPrice = parseFloat(merchantRes.rows[0].merchant_price);
+        } else {
+          throw new Error(`Invalid item type for ${JSON.stringify(item)}`);
+        }
+
+        itemTotal = itemPrice * item.quantity;
+
+        // Insert into order_items
         const itemRes = await client.query(
-          `INSERT INTO order_items (order_id, product_id, quantity, product_price, total_price)
-         VALUES ($1, $2, $3, $4, $5)
+          `INSERT INTO order_items 
+           (order_id, product_id, merchant_id, quantity, product_price, total_price, item_type)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING order_item_id`,
-          [orderId, item.product_id, item.quantity, productPrice, itemTotal]
+          [
+            orderId,
+            item.type === "product" ? item.product_id : null,
+            item.type === "merchant" ? item.merchant_id : null,
+            item.quantity,
+            itemPrice,
+            itemTotal,
+            item.type,
+          ]
         );
+
         const orderItemId = itemRes.rows[0].order_item_id;
 
-        // Add extras
-        for (const extraId of item.extras || []) {
-          // Validate extra_id
-          const extraRes = await client.query(
-            `SELECT extra_price FROM extras WHERE extra_id = $1`,
-            [extraId]
-          );
-          if (extraRes.rows.length === 0) {
-            throw new Error(`Extra ${extraId} not found`);
-          }
-          const extraPrice = extraRes.rows[0].extra_price;
+        // Extras still only apply to products
+        if (item.type === "product" && item.extras?.length) {
+          for (const extraId of item.extras) {
+            const extraRes = await client.query(
+              `SELECT extra_price FROM extras WHERE extra_id = $1`,
+              [extraId]
+            );
+            if (extraRes.rows.length === 0)
+              throw new Error(`Extra ${extraId} not found`);
+            const extraPrice = extraRes.rows[0].extra_price;
 
-          // Insert order_item_extra
-          await client.query(
-            `INSERT INTO order_item_extras (order_item_id, extra_id, extra_price)
-           VALUES ($1, $2, $3)`,
-            [orderItemId, extraId, extraPrice]
-          );
+            await client.query(
+              `INSERT INTO order_item_extras (order_item_id, extra_id, extra_price)
+             VALUES ($1, $2, $3)`,
+              [orderItemId, extraId, extraPrice]
+            );
+          }
         }
       }
 
-      // Commit transaction (triggers will update total_price, points_earned, order_code)
       await client.query("COMMIT");
 
-      // Fetch order_id, order_code, and total_price
       const finalOrderRes = await pool.query(
         `SELECT order_id, order_code, total_price FROM orders WHERE order_id = $1`,
         [orderId]
       );
-      if (finalOrderRes.rows.length === 0) {
-        throw new Error("Order not found after creation");
-      }
 
       return finalOrderRes.rows[0];
     } catch (error) {
@@ -192,6 +207,80 @@ class OrderModel {
       client.release();
     }
   }
+
+  static async applyDiscountToOrder(orderId, discountValue) {
+    const client = await pool.connect();
+
+    try {
+      await client.query("BEGIN");
+
+      // Validate input
+      if (!discountValue || isNaN(discountValue) || discountValue <= 0) {
+        throw new Error("Invalid discount value. Must be a positive number.");
+      }
+
+      // Get order details
+      const orderRes = await client.query(
+        `SELECT order_id, user_id, total_price, applied_discount, order_status
+       FROM orders 
+       WHERE order_id = $1`,
+        [orderId]
+      );
+
+      if (orderRes.rows.length === 0) {
+        throw new Error("Order not found");
+      }
+
+      const order = orderRes.rows[0];
+
+      if (order.order_status === "completed") {
+        throw new Error("Cannot apply discount to a completed order");
+      }
+
+      if (order.applied_discount && order.applied_discount > 0) {
+        throw new Error("A discount has already been applied to this order");
+      }
+
+      // Calculate percentage discount
+      const totalPrice = parseFloat(order.total_price);
+      const discountAmount = (totalPrice * parseFloat(discountValue)) / 100;
+      const discountedTotal = Math.max(totalPrice - discountAmount, 0);
+
+      // Apply discount to order
+      await client.query(
+        `UPDATE orders 
+       SET applied_discount = $1, 
+           total_price = $2,
+           updated_at = NOW()
+       WHERE order_id = $3`,
+        [discountAmount, discountedTotal, orderId]
+      );
+
+      await client.query("COMMIT");
+
+      // Fetch updated order
+      const updatedOrder = await pool.query(
+        `SELECT order_id, order_code, order_status, total_price, applied_discount, updated_at
+       FROM orders 
+       WHERE order_id = $1`,
+        [orderId]
+      );
+
+      return {
+        message: `Applied ${discountValue}% discount successfully`,
+        discount_percentage: discountValue,
+        discount_amount: discountAmount,
+        order: updatedOrder.rows[0],
+      };
+    } catch (error) {
+      await client.query("ROLLBACK");
+      console.error("Error applying discount:", error.message);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   // Get comprehensive order details (for admin dashboard)
   static async getOrderDetails(orderId) {
     try {

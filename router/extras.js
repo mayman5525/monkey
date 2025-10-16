@@ -102,5 +102,28 @@ router.get("/:extraId", async (req, res) => {
     res.status(200).json(updatedExtra);
   });
 });
+router.put("/:extraId", async (req, res) => {
+  const client = await pool.connect();
+  const extraId = parseInt(req.params.extraId, 10);
+  const { extraName, extraPrice, extraDescription } = req.body;
+  if (isNaN(extraId) || !extraName || !extraPrice || !extraDescription) {
+    client.release();
+    return res
+      .status(400)
+      .json({ error: "Invalid extraId, extraName, or extraPrice" });
+  }
+  const updatedExtra = await extraController.updateExtra(
+    extraId, // first
+    extraName, // second
+    extraPrice, // third
+    extraDescription, // fourth
+    client // fifth
+  );
+  client.release();
+  if (!updatedExtra) {
+    return res.status(404).json({ error: "Extra not found" });
+  }
+  res.status(200).json(updatedExtra);
+});
 
 module.exports = router;

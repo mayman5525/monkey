@@ -141,3 +141,19 @@ CREATE TRIGGER trigger_update_order_total_extras
 AFTER INSERT OR UPDATE OR DELETE ON order_item_extras
 FOR EACH ROW
 EXECUTE FUNCTION update_order_total();
+
+-- 1. Create merchants table
+CREATE TABLE merchant (
+  merchant_id SERIAL PRIMARY KEY,
+  merchant_name VARCHAR(255) NOT NULL,
+  merchant_category VARCHAR(100),
+  merchant_description TEXT,
+  merchant_price NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 2. Update order_items to support either product or merchant
+ALTER TABLE  IF EXISTS order_items
+  ADD COLUMN merchant_id INT REFERENCES merchant(merchant_id),
+  ADD COLUMN item_type VARCHAR(20) CHECK (item_type IN ('product', 'merchant')) DEFAULT 'product';
