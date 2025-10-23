@@ -24,6 +24,7 @@ class ProductModel {
     );
     return res.rows;
   }
+  // Create product with photo
   static async createProduct(productData) {
     const {
       product_name,
@@ -32,11 +33,25 @@ class ProductModel {
       category,
       product_photo,
       is_featured,
+      photo_data,
+      photo_mime_type,
     } = productData;
+
     const res = await pool.query(
-      `INSERT INTO product (product_name, product_components, product_price, product_category, product_photo, is_featured, created_at, updated_at)
-     VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-     RETURNING *`,
+      `INSERT INTO product (
+        product_name, 
+        product_components, 
+        product_price, 
+        product_category, 
+        product_photo, 
+        is_featured, 
+        photo_data, 
+        photo_mime_type,
+        created_at, 
+        updated_at
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+      RETURNING *`,
       [
         product_name,
         product_components,
@@ -44,6 +59,8 @@ class ProductModel {
         category,
         product_photo,
         is_featured || false,
+        photo_data || null,
+        photo_mime_type || null,
       ]
     );
     return res.rows[0];
@@ -57,12 +74,24 @@ class ProductModel {
       category,
       product_photo,
       is_featured,
+      photo_data,
+      photo_mime_type,
     } = updatedData;
+
     const res = await pool.query(
       `UPDATE product 
-     SET product_name = $1, product_components = $2, product_price = $3, product_category = $4, product_photo = $5, is_featured = $6, updated_at = NOW()
-     WHERE product_id = $7
-     RETURNING *`,
+      SET 
+        product_name = $1, 
+        product_components = $2, 
+        product_price = $3, 
+        product_category = $4, 
+        product_photo = $5, 
+        is_featured = $6,
+        photo_data = $7,
+        photo_mime_type = $8,
+        updated_at = NOW()
+      WHERE product_id = $9
+      RETURNING *`,
       [
         product_name,
         product_components,
@@ -70,9 +99,12 @@ class ProductModel {
         category,
         product_photo,
         is_featured || false,
+        photo_data || null,
+        photo_mime_type || null,
         id,
       ]
     );
+
     if (res.rows.length === 0) {
       throw new Error("Product not found");
     }

@@ -1,12 +1,18 @@
 const productModel = require("../modules/product_model");
-const { upload, uploadProductPhoto } = require("../utils/cloudinary");
+const {
+  processUploadedFile,
+  formatItemsWithPhotos,
+  formatItemWithPhoto,
+} = require("../utils/photoHelper");
+
 class productController {
   static async getAllProducts(req, res) {
     try {
       const Products = await productModel.getProducts();
+      const formattedProducts = formatItemsWithPhotos(Products);
       res.status(200).json({
         message: "All products retrieved successfully",
-        products: Products,
+        products: formattedProducts,
       });
     } catch (error) {
       res
@@ -19,9 +25,13 @@ class productController {
     try {
       const { id } = req.params;
       const product = await productModel.getProductsById(id);
+      if (!product || product.length === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      const formattedProduct = formatItemWithPhoto(product[0]);
       res.status(200).json({
         message: `Product with ID ${id} retrieved successfully`,
-        product: product,
+        product: formattedProduct,
       });
     } catch (error) {
       res
@@ -34,9 +44,10 @@ class productController {
     try {
       const { query } = req.query;
       const products = await productModel.searchProducts(query);
+      const formattedProducts = formatItemsWithPhotos(products);
       res.status(200).json({
         message: `Products matching query "${query}" retrieved successfully`,
-        products: products,
+        products: formattedProducts,
       });
     } catch (error) {
       res
@@ -49,9 +60,10 @@ class productController {
     try {
       const { category } = req.params;
       const products = await productModel.getProductsByCategory(category);
+      const formattedProducts = formatItemsWithPhotos(products);
       res.status(200).json({
         message: `Products in category "${category}" retrieved successfully`,
-        products: products,
+        products: formattedProducts,
       });
     } catch (error) {
       res.status(500).json({
@@ -63,9 +75,18 @@ class productController {
   static async createProduct(req, res) {
     try {
       const productData = req.body;
-      // Check if a file is uploaded
+
+      // Handle photo upload - store directly in database
       if (req.file) {
-        productData.product_photo = await uploadProductPhoto(req.file);
+        try {
+          const photoDbData = processUploadedFile(req.file);
+          productData.photo_data = photoDbData.photo_data;
+          productData.photo_mime_type = photoDbData.photo_mime_type;
+        } catch (photoError) {
+          return res.status(400).json({
+            error: `Photo upload failed: ${photoError.message}`,
+          });
+        }
       }
 
       if (
@@ -85,9 +106,10 @@ class productController {
         productData.is_featured === true || productData.is_featured === "true";
 
       const newProduct = await productModel.createProduct(productData);
+      const formattedProduct = formatItemWithPhoto(newProduct);
       res.status(201).json({
         message: "Product created successfully",
-        product: newProduct,
+        product: formattedProduct,
       });
     } catch (error) {
       console.error("Error creating product:", error);
@@ -109,14 +131,23 @@ class productController {
         .json({ error: "An error occurred while creating the product" });
     }
   }
+
   static async updateProduct(req, res) {
     try {
       const { id } = req.params;
       const updatedData = req.body;
 
-      // Check if a file is uploaded for update
+      // Handle photo upload - store directly in database
       if (req.file) {
-        updatedData.product_photo = await uploadProductPhoto(req.file);
+        try {
+          const photoDbData = processUploadedFile(req.file);
+          updatedData.photo_data = photoDbData.photo_data;
+          updatedData.photo_mime_type = photoDbData.photo_mime_type;
+        } catch (photoError) {
+          return res.status(400).json({
+            error: `Photo upload failed: ${photoError.message}`,
+          });
+        }
       }
 
       if (
@@ -136,9 +167,10 @@ class productController {
         return res.status(404).json({ error: "Product not found" });
       }
 
+      const formattedProduct = formatItemWithPhoto(updatedProduct);
       res.status(200).json({
         message: "Product updated successfully",
-        product: updatedProduct,
+        product: formattedProduct,
       });
     } catch (error) {
       console.error("Error updating product:", error);
@@ -171,4 +203,5 @@ class productController {
     }
   }
 }
+
 module.exports = productController;
