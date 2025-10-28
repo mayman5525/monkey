@@ -31,6 +31,8 @@ async function getAllUsers() {
     name: user.user_name,
     email: user.user_email,
     number: user.user_number,
+    total_orders: user.total_orders,
+    is_frequent_visitor: user.is_frequent_visitor,
     created_at: user.created_at,
     updated_at: user.updated_at,
   }));
