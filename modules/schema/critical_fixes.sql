@@ -390,6 +390,7 @@ ALTER TABLE merchant
 ADD COLuMN IF NOT EXISTS photo_public_id TEXT;
 ALTER TABLE product ADD COLUMN IF NOT EXISTS category_id INTEGER;
 
+ALTER TABLE merchant ADD COLUMN IF NOT EXISTS photo_public_id TEXT;
 -- Add foreign key
 ALTER TABLE product ADD CONSTRAINT fk_product_category 
   FOREIGN KEY (category_id) REFERENCES category(category_id);

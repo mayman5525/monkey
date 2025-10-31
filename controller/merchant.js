@@ -1,43 +1,49 @@
 // controllers/merchant.controller.js
 const MerchantService = require("../modules/merchant");
-const {
-  processUploadedFile,
-  formatItemsWithPhotos,
-  formatItemWithPhoto,
-} = require("../utils/cloudinary");
+const { uploadFromBuffer, destroy } = require("../utils/cloudinary");
+
 
 exports.createMerchant = async (req, res) => {
   try {
-    console.log("📝 Request body:", req.body);
-    console.log("📸 Request file:", req.file); // This should NOT be undefined!
-    console.log("🔍 File exists?", !!req.file);
-
     const merchantData = req.body;
 
-    // Handle photo upload if file is present
+    // === 1. UPLOAD PHOTO TO CLOUDINARY ===
+    let photoUrl = null;
+    let photoPublicId = null;
+
     if (req.file) {
-      console.log("✅ Processing file:", req.file.originalname);
       try {
-        const photoDbData = processUploadedFile(req.file);
-        console.log("✅ Photo processed, size:", photoDbData.photo_data.length);
-        merchantData.photo_data = photoDbData.photo_data;
-        merchantData.photo_mime_type = photoDbData.photo_mime_type;
-      } catch (photoError) {
-        console.error("❌ Photo processing error:", photoError.message);
-        return res
-          .status(400)
-          .json({ success: false, error: photoError.message });
+        const result = await uploadFromBuffer(req.file.buffer, {
+          folder: "ecommerce/merchants",
+        });
+        photoUrl = result.secure_url;
+        photoPublicId = result.public_id;
+        console.log("Uploaded to Cloudinary:", photoUrl);
+      } catch (uploadError) {
+        console.error("Cloudinary upload failed:", uploadError);
+        return res.status(500).json({ error: "Failed to upload image" });
       }
-    } else {
-      console.log("⚠️ No file received in req.file");
     }
 
-    const merchant = await MerchantService.createMerchant(merchantData);
-    const formattedMerchant = formatItemWithPhoto(merchant);
-    res.status(201).json({ success: true, merchant: formattedMerchant });
+    // === 2. VALIDATE REQUIRED FIELDS ===
+    if (!merchantData.merchant_name || !merchantData.merchant_price || isNaN(merchantData.merchant_price)) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // === 3. CREATE MERCHANT ===
+    const merchant = await MerchantService.createMerchant({
+      merchant_name: merchantData.merchant_name,
+      merchant_description: merchantData.merchant_description,
+      merchant_price: parseFloat(merchantData.merchant_price),
+      merchant_category: merchantData.merchant_category,
+      merchant_photo: photoUrl,
+      photo_public_id: photoPublicId,
+    });
+
+    res.status(201).json({ success: true, merchant });
   } catch (error) {
-    console.error("Error creating merchant:", error.message);
-    res.status(400).json({ success: false, error: error.message });
+    console.error("Error creating merchant:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 exports.getAllMerchants = async (req, res) => {
@@ -62,30 +68,48 @@ exports.getMerchantById = async (req, res) => {
 
 exports.updateMerchant = async (req, res) => {
   try {
-    const merchantData = req.body;
+    const { id } = req.params;
+    const data = req.body;
 
-    // Handle photo upload if file is present
+    // === 1. GET OLD PUBLIC_ID ===
+    const current = await MerchantService.getMerchantById(id);
+    const oldPublicId = current.photo_public_id;
+
+    // === 2. UPLOAD NEW PHOTO (if provided) ===
+    let photoUrl = current.merchant_photo;
+    let photoPublicId = oldPublicId;
+
     if (req.file) {
       try {
-        const photoDbData = processUploadedFile(req.file);
-        merchantData.photo_data = photoDbData.photo_data;
-        merchantData.photo_mime_type = photoDbData.photo_mime_type;
-      } catch (photoError) {
-        console.error("Photo processing error:", photoError.message);
-        return res
-          .status(400)
-          .json({ success: false, error: photoError.message });
+        if (oldPublicId) {
+          await destroy(oldPublicId);
+          console.log("Deleted old image:", oldPublicId);
+        }
+        const result = await uploadFromBuffer(req.file.buffer, {
+          folder: "ecommerce/merchants",
+        });
+        photoUrl = result.secure_url;
+        photoPublicId = result.public_id;
+      } catch (err) {
+        return res.status(500).json({ error: "Image upload failed" });
       }
     }
 
-    const merchant = await MerchantService.updateMerchant(
-      req.params.id,
-      merchantData
-    );
-    const formattedMerchant = formatItemWithPhoto(merchant);
-    res.status(200).json({ success: true, merchant: formattedMerchant });
+    // === 3. UPDATE ===
+    const merchant = await MerchantService.updateMerchant(id, {
+      merchant_name: data.merchant_name,
+      merchant_description: data.merchant_description,
+      merchant_price: data.merchant_price
+        ? parseFloat(data.merchant_price)
+        : undefined,
+      merchant_category: data.merchant_category,
+      merchant_photo: photoUrl,
+      photo_public_id: photoPublicId,
+    });
+
+    res.json({ success: true, merchant });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 

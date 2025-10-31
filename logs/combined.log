@@ -921,3 +921,6 @@
 {"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-10-31T22:07:32.010Z"}
 {"level":"info","message":"::1 - - [31/Oct/2025:22:07:42 +0000] \"POST /api/products HTTP/1.1\" 201 531 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-10-31T22:07:42.210Z"}
 {"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-10-31T22:08:04.402Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-10-31T22:17:51.287Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-10-31T22:17:59.693Z"}
+{"level":"info","message":"::1 - - [31/Oct/2025:22:18:29 +0000] \"POST /api/merchants HTTP/1.1\" 201 329 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-10-31T22:18:29.831Z"}
