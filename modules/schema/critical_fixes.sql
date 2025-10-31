@@ -1,9 +1,15 @@
+-- ========================================
+-- CRITICAL FIXES MIGRATION
+-- Version: 1.0.0 - HOTFIX
+-- Date: 2025-10-31
+-- Description: Fixes critical bugs without breaking existing functionality
+-- ========================================
+
 BEGIN;
 
 -- ========================================
 -- SECTION 1: SAFETY ANNOUNCEMENT
 -- ========================================
-
 -- This script performs critical fixes. Run only once in production.
 
 -- ========================================
@@ -123,6 +129,7 @@ BEGIN
         END IF;
     END IF;
 
+    -- Update total_price first, then compute points based on new total
     UPDATE orders
     SET total_price = COALESCE(total_price, 0) + delta,
         updated_at = NOW()
@@ -166,6 +173,7 @@ DECLARE
     v_current_total NUMERIC;
     v_new_total NUMERIC;
 BEGIN
+    -- Only apply discount when transitioning TO 'confirmed'
     IF NEW.order_status <> 'confirmed' OR OLD.order_status = 'confirmed' THEN
         RETURN NEW;
     END IF;
@@ -233,6 +241,7 @@ DECLARE
     v_visits_per_week NUMERIC;
     v_is_frequent BOOLEAN;
 BEGIN
+    -- Only trigger on transition TO 'completed'
     IF NEW.order_status <> 'completed' OR OLD.order_status = 'completed' THEN
         RETURN NEW;
     END IF;

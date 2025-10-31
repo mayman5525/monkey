@@ -1,4 +1,5 @@
 const productModel = require("../modules/product_model");
+const pool = require("../modules/db");
 const {
   processUploadedFile,
   formatItemsWithPhotos,
@@ -72,21 +73,15 @@ class productController {
     }
   }
 
+  // controller
   static async createProduct(req, res) {
     try {
       const productData = req.body;
 
-      // Handle photo upload - store directly in database
       if (req.file) {
-        try {
-          const photoDbData = processUploadedFile(req.file);
-          productData.photo_data = photoDbData.photo_data;
-          productData.photo_mime_type = photoDbData.photo_mime_type;
-        } catch (photoError) {
-          return res.status(400).json({
-            error: `Photo upload failed: ${photoError.message}`,
-          });
-        }
+        const photoDbData = processUploadedFile(req.file);
+        productData.photo_data = photoDbData.photo_data;
+        productData.photo_mime_type = photoDbData.photo_mime_type;
       }
 
       if (
@@ -101,12 +96,27 @@ class productController {
         });
       }
 
-      // Ensure is_featured is a boolean
+      // ✅ Check category by name
+      const categoryResult = await pool.query(
+        `SELECT category_name FROM category WHERE category_name = $1`,
+        [productData.category]
+      );
+
+      if (categoryResult.rows.length === 0) {
+        return res.status(400).json({
+          error: `Invalid category: '${productData.category}' does not exist`,
+        });
+      }
+
+      // replace category name with ID
+      productData.category = categoryResult.rows[0].category_id;
+
       productData.is_featured =
         productData.is_featured === true || productData.is_featured === "true";
 
       const newProduct = await productModel.createProduct(productData);
       const formattedProduct = formatItemWithPhoto(newProduct);
+
       res.status(201).json({
         message: "Product created successfully",
         product: formattedProduct,
