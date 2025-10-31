@@ -4,7 +4,7 @@ const {
   processUploadedFile,
   formatItemsWithPhotos,
   formatItemWithPhoto,
-} = require("../utils/photoHelper");
+} = require("../utils/cloudinary");
 
 exports.createMerchant = async (req, res) => {
   try {

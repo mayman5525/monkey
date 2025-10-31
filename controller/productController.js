@@ -1,11 +1,7 @@
 const productModel = require("../modules/product_model");
 const pool = require("../modules/db");
-const {
-  processUploadedFile,
-  formatItemsWithPhotos,
-  formatItemWithPhoto,
-} = require("../utils/photoHelper");
-
+const { uploadFromBuffer, destroy } = require("../utils/cloudinary");
+const { formatItemWithPhoto } = require("../utils/cloudinary"); // you can keep this for URL → dataURL if you still need it
 class productController {
   static async getAllProducts(req, res) {
     try {
@@ -78,88 +74,99 @@ class productController {
     try {
       const productData = req.body;
 
+      // 1. UPLOAD PHOTO
+      let photoUrl = null;
+      let photoPublicId = null;
       if (req.file) {
-        const photoDbData = processUploadedFile(req.file);
-        productData.photo_data = photoDbData.photo_data;
-        productData.photo_mime_type = photoDbData.photo_mime_type;
+        const result = await uploadFromBuffer(req.file.buffer, {
+          folder: "ecommerce/products",
+        });
+        photoUrl = result.secure_url;
+        photoPublicId = result.public_id;
       }
 
+      // 2. VALIDATE
       if (
         !productData.product_name ||
         !productData.price ||
         isNaN(productData.price) ||
         !productData.category
       ) {
-        return res.status(400).json({
-          error:
-            "Missing or invalid required fields: product_name, price, category",
-        });
+        return res.status(400).json({ error: "Missing required fields" });
       }
 
-      // ✅ Check category by name
+      // 3. GET category_id
       const categoryResult = await pool.query(
-        `SELECT category_name FROM category WHERE category_name = $1`,
+        `SELECT category_id FROM category WHERE category_name = $1`,
         [productData.category]
       );
-
       if (categoryResult.rows.length === 0) {
-        return res.status(400).json({
-          error: `Invalid category: '${productData.category}' does not exist`,
-        });
-      }
-
-      // replace category name with ID
-      productData.category = categoryResult.rows[0].category_id;
-
-      productData.is_featured =
-        productData.is_featured === true || productData.is_featured === "true";
-
-      const newProduct = await productModel.createProduct(productData);
-      const formattedProduct = formatItemWithPhoto(newProduct);
-
-      res.status(201).json({
-        message: "Product created successfully",
-        product: formattedProduct,
-      });
-    } catch (error) {
-      console.error("Error creating product:", error);
-      if (error.code === "23503") {
         return res
           .status(400)
-          .json({ error: "Invalid category: category does not exist" });
+          .json({ error: `Category '${productData.category}' not found` });
       }
-      if (error.code === "42P01") {
-        return res.status(500).json({ error: "Database table does not exist" });
-      }
-      if (error.code === "42703") {
-        return res
-          .status(500)
-          .json({ error: "Database column does not exist" });
-      }
-      res
-        .status(500)
-        .json({ error: "An error occurred while creating the product" });
+      const categoryId = categoryResult.rows[0].category_id;
+
+      // 4. CREATE
+      const newProduct = await productModel.createProduct({
+        product_name: productData.product_name,
+        product_components: productData.product_components || null,
+        price: parseFloat(productData.price),
+        category_id: categoryId, // ← FIXED
+        product_photo: photoUrl,
+        photo_public_id: photoPublicId,
+        is_featured:
+          productData.is_featured === true ||
+          productData.is_featured === "true",
+      });
+
+      res.status(201).json({
+        message: "Product created",
+        product: newProduct,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Server error" });
     }
   }
-
   static async updateProduct(req, res) {
     try {
       const { id } = req.params;
       const updatedData = req.body;
 
-      // Handle photo upload - store directly in database
+      // === 1. FETCH CURRENT PRODUCT (to get old public_id) ===
+      const currentProduct = await productModel.getProductsById(id);
+      if (!currentProduct || currentProduct.length === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      const oldPublicId = currentProduct[0].photo_public_id;
+
+      // === 2. UPLOAD NEW PHOTO (if provided) ===
+      let photoUrl = currentProduct[0].product_photo; // keep old
+      let photoPublicId = oldPublicId;
+
       if (req.file) {
         try {
-          const photoDbData = processUploadedFile(req.file);
-          updatedData.photo_data = photoDbData.photo_data;
-          updatedData.photo_mime_type = photoDbData.photo_mime_type;
-        } catch (photoError) {
-          return res.status(400).json({
-            error: `Photo upload failed: ${photoError.message}`,
+          // Delete old image from Cloudinary
+          if (oldPublicId) {
+            await destroy(oldPublicId);
+            console.log("Deleted old image:", oldPublicId);
+          }
+
+          // Upload new image
+          const result = await uploadFromBuffer(req.file.buffer, {
+            folder: "ecommerce/products",
           });
+          photoUrl = result.secure_url;
+          photoPublicId = result.public_id;
+          console.log("Uploaded new image:", result.secure_url);
+        } catch (uploadError) {
+          console.error("Cloudinary upload failed:", uploadError);
+          return res.status(500).json({ error: "Failed to upload image" });
         }
       }
 
+      // === 3. VALIDATE REQUIRED FIELDS ===
       if (
         !updatedData.product_name ||
         !updatedData.price ||
@@ -167,15 +174,37 @@ class productController {
         !updatedData.category
       ) {
         return res.status(400).json({
-          error:
-            "Missing or invalid required fields: product_name, price, category",
+          error: "Missing required fields: product_name, price, category",
         });
       }
 
-      const updatedProduct = await productModel.updateProduct(id, updatedData);
-      if (!updatedProduct) {
-        return res.status(404).json({ error: "Product not found" });
+      // === 4. CONVERT CATEGORY NAME → ID ===
+      const categoryResult = await pool.query(
+        `SELECT category_id FROM category WHERE category_name = $1`,
+        [updatedData.category]
+      );
+
+      if (categoryResult.rows.length === 0) {
+        return res.status(400).json({
+          error: `Invalid category: '${updatedData.category}' does not exist`,
+        });
       }
+      updatedData.category = categoryResult.rows[0].category_id;
+
+      // === 5. SET OPTIONAL FIELDS ===
+      updatedData.is_featured =
+        updatedData.is_featured === true || updatedData.is_featured === "true";
+
+      // === 6. CALL MODEL WITH NEW VALUES ===
+      const updatedProduct = await productModel.updateProduct(id, {
+        product_name: updatedData.product_name,
+        product_components: updatedData.product_components,
+        price: updatedData.price,
+        category: updatedData.category,
+        product_photo: photoUrl,
+        is_featured: updatedData.is_featured,
+        photo_public_id: photoPublicId,
+      });
 
       const formattedProduct = formatItemWithPhoto(updatedProduct);
       res.status(200).json({
@@ -185,16 +214,9 @@ class productController {
     } catch (error) {
       console.error("Error updating product:", error);
       if (error.code === "23503") {
-        return res
-          .status(400)
-          .json({ error: "Invalid category: category does not exist" });
+        return res.status(400).json({ error: "Invalid category" });
       }
-      if (error.message === "Product not found") {
-        return res.status(404).json({ error: "Product not found" });
-      }
-      res
-        .status(500)
-        .json({ error: "An error occurred while updating the product" });
+      res.status(500).json({ error: "An error occurred while updating" });
     }
   }
 

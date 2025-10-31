@@ -383,6 +383,16 @@ CREATE INDEX IF NOT EXISTS idx_discounts_user_active ON discounts(user_id, is_ac
 -- ========================================
 -- SECTION 8: DATA VALIDATION CONSTRAINTS
 -- ========================================
+ALTER TABLE product
+ADD COLUMN IF NOT EXISTS photo_public_id TEXT;
+
+ALTER TABLE merchant
+ADD COLuMN IF NOT EXISTS photo_public_id TEXT;
+ALTER TABLE product ADD COLUMN IF NOT EXISTS category_id INTEGER;
+
+-- Add foreign key
+ALTER TABLE product ADD CONSTRAINT fk_product_category 
+  FOREIGN KEY (category_id) REFERENCES category(category_id);
 
 DO $$
 BEGIN
