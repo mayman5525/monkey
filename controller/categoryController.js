@@ -1,4 +1,4 @@
-const categoryModel = require("../modules/");
+const categoryModel = require("../modules/categoryModel");
 class categoryController {
   static async getAllCategories(req, res) {
     try {
@@ -23,9 +23,11 @@ class categoryController {
         category: newCategory,
       });
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: "An error occurred while creating the category" });
+      console.error("Error creating category:", error);
+      res.status(500).json({
+        error: "An error occurred while creating the category",
+        details: error.message,
+      });
     }
   }
   static async deleteCategory(req, res) {
@@ -61,4 +63,4 @@ class categoryController {
     }
   }
 }
-module.exports = {categoryController};
+module.exports = categoryController;

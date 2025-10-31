@@ -8,6 +8,7 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
+  keepAlive: true, // helps prevent “Connection terminated unexpectedly”
 });
 
 const initDb = async () => {

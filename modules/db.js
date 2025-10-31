@@ -8,6 +8,7 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false, // Required for Render external URLs with SSL
   },
+  keepAlive: true, // helps prevent “Connection terminated unexpectedly”
 });
 
 pool.on("error", (err) => {

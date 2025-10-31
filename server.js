@@ -55,9 +55,9 @@ app.use("/api/products", require("./router/products"));
 app.use("/api/extras", require("./router/extras"));
 app.use("/api/orders", require("./router/order"));
 app.use("/api/merchants", require("./router/merchant"));
-// app.use("/api/categories", require("./router/category"));
-// app.use("/api/orders", require("./router/order"));
-
+app.use("/api/categories", require("./router/category"));
+const photoRoutes = require("./router/photo");
+app.use("/uploads", photoRoutes);
 // // 404 handler
 // app.all('*', (req, res) => {
 //   res.status(404).json({
