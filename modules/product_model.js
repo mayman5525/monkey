@@ -31,23 +31,28 @@ class ProductModel {
     product_name,
     product_components,
     price,
-    category_id, // ← NEW
+    category_id,
+    category_name, // ← NEW: category name to set product_category
     product_photo,
     is_featured,
     photo_public_id,
   }) {
     const res = await pool.query(
       `INSERT INTO product (
-      product_name, product_components, product_price, category_id,
+      product_name, product_components, product_price, category_id, product_category,
       product_photo, is_featured, photo_public_id,
       created_at, updated_at
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
-    RETURNING *`,
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+    RETURNING 
+      product_id, product_name, product_components, product_price, 
+      product_category, category_id, product_photo, is_featured, 
+      has_points, points, created_at, updated_at`,
       [
         product_name,
         product_components,
         price,
         category_id,
+        category_name, // Set product_category with category name
         product_photo,
         is_featured,
         photo_public_id,
@@ -99,13 +104,23 @@ class ProductModel {
     return res.rows[0];
   }
   static async deleteProduct(id) {
-    console.log("Deleting product ID:", id);
+    // First check if product exists
+    const checkRes = await pool.query(
+      "SELECT product_id FROM product WHERE product_id = $1",
+      [id]
+    );
+    if (checkRes.rows.length === 0) {
+      throw new Error("Product not found");
+    }
+
+    // Delete the product (cascade will handle related records)
     const res = await pool.query(
       "DELETE FROM product WHERE product_id = $1 RETURNING *",
       [id]
     );
+
     if (res.rows.length === 0) {
-      throw new Error("Product not found");
+      throw new Error("Product could not be deleted");
     }
     return res.rows[0];
   }

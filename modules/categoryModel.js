@@ -17,10 +17,24 @@ class categoryModel {
   }
 
   static async deleteCategory(id) {
+    // First check if category exists
+    const checkRes = await db.query(
+      "SELECT category_id FROM category WHERE category_id = $1",
+      [id]
+    );
+    if (checkRes.rows.length === 0) {
+      throw new Error("Category not found");
+    }
+
+    // Delete the category (cascade will handle related products)
     const res = await db.query(
       "DELETE FROM category WHERE category_id = $1 RETURNING *",
       [id]
     );
+    
+    if (res.rows.length === 0) {
+      throw new Error("Category could not be deleted");
+    }
     return res.rows[0];
   }
 

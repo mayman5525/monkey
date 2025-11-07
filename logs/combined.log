@@ -947,3 +947,32 @@
 {"level":"info","message":"::1 - - [06/Nov/2025:04:41:28 +0000] \"POST /api/products HTTP/1.1\" 400 38 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T04:41:28.541Z"}
 {"level":"info","message":"::1 - - [06/Nov/2025:04:41:52 +0000] \"POST /api/products HTTP/1.1\" 400 42 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T04:41:52.782Z"}
 {"level":"info","message":"::1 - - [06/Nov/2025:04:42:20 +0000] \"POST /api/products HTTP/1.1\" 400 42 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T04:42:20.222Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T21:52:56.948Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T21:53:07.152Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T23:37:59.721Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T23:38:08.429Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:40:08 +0000] \"POST /api/products HTTP/1.1\" 400 42 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:40:08.907Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:40:32 +0000] \"GET /api/categories HTTP/1.1\" 200 67 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:40:32.641Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:40:40 +0000] \"POST /api/categories HTTP/1.1\" 201 199 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:40:40.484Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:43:31 +0000] \"POST /api/products HTTP/1.1\" 201 538 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:43:31.133Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T23:46:27.219Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T23:46:27.371Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T23:46:35.332Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T23:46:37.066Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T23:47:18.198Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T23:47:18.867Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T23:47:26.568Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T23:47:28.260Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:48:26 +0000] \"POST /api/products HTTP/1.1\" 400 42 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:48:26.333Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:48:34 +0000] \"POST /api/products HTTP/1.1\" 400 38 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:48:34.842Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:48:41 +0000] \"POST /api/categories HTTP/1.1\" 201 199 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:48:41.885Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:48:49 +0000] \"POST /api/products HTTP/1.1\" 201 444 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:48:49.336Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:50:07 +0000] \"GET /api/categories HTTP/1.1\" 200 211 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:50:07.941Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:50:16 +0000] \"DELETE /api/categories/1 HTTP/1.1\" 500 57 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:50:16.508Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T23:55:02.404Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-07T23:55:02.450Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T23:55:10.261Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-07T23:55:28.935Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:57:37 +0000] \"GET /api/categories HTTP/1.1\" 200 211 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:57:37.551Z"}
+{"level":"info","message":"::1 - - [07/Nov/2025:23:57:46 +0000] \"DELETE /api/categories/1 HTTP/1.1\" 400 75 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-07T23:57:46.790Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-07T23:58:32.119Z"}

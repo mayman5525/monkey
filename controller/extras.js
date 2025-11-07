@@ -13,10 +13,24 @@ class ExtraClass {
     return res.rows[0];
   }
   async deleteExtra(extraId, client) {
+    // First check if extra exists
+    const checkRes = await client.query(
+      "SELECT extra_id FROM extras WHERE extra_id = $1",
+      [extraId]
+    );
+    if (checkRes.rows.length === 0) {
+      throw new Error("Extra not found");
+    }
+
+    // Delete the extra (cascade will handle related records)
     const res = await client.query(
       "DELETE FROM extras WHERE extra_id = $1 RETURNING *",
       [extraId]
     );
+    
+    if (res.rows.length === 0) {
+      throw new Error("Extra could not be deleted");
+    }
     return res.rows[0];
   }
   async getExtraById(extraId, client) {

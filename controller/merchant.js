@@ -139,9 +139,39 @@ exports.updateMerchantPhoto = async (req, res) => {
 
 exports.deleteMerchant = async (req, res) => {
   try {
-    const deleted = await MerchantService.deleteMerchant(req.params.id);
-    res.status(200).json({ success: true, deleted });
+    const { id } = req.params;
+    
+    // Validate ID
+    if (isNaN(id)) {
+      return res.status(400).json({ success: false, error: "Invalid merchant ID" });
+    }
+
+    const deleted = await MerchantService.deleteMerchant(id);
+    res.status(200).json({ 
+      success: true, 
+      message: `Merchant with ID ${id} deleted successfully`,
+      deleted 
+    });
   } catch (error) {
-    res.status(404).json({ success: false, error: error.message });
+    console.error("Error deleting merchant:", error);
+    
+    // Handle specific error cases
+    if (error.message === "Merchant not found") {
+      return res.status(404).json({ success: false, error: error.message });
+    }
+    
+    // Handle foreign key constraint errors (shouldn't happen with cascade, but just in case)
+    if (error.code === "23503") {
+      return res.status(400).json({ 
+        success: false,
+        error: "Cannot delete merchant: it is still referenced by other records" 
+      });
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      error: "An error occurred while deleting the merchant",
+      details: error.message 
+    });
   }
 };

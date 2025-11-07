@@ -41,24 +41,41 @@ router.post("/", async (req, res) => {
 });
 // Delete an extra (admin only)
 router.delete("/:extraId", async (req, res) => {
+  const client = await pool.connect();
   try {
     const extraId = parseInt(req.params.extraId, 10);
     if (isNaN(extraId)) {
+      client.release();
       return res.status(400).json({ error: "Invalid extraId" });
     }
-    const client = await pool.connect();
+    
     const deletedExtra = await extraController.deleteExtra(extraId, client);
     client.release();
-    if (!deletedExtra) {
-      return res.status(404).json({ error: "Extra not found" });
-    }
-    res
-      .status(200)
-      .json({ message: "Extra deleted successfully", extra: deletedExtra });
+    
+    res.status(200).json({ 
+      message: `Extra with ID ${extraId} deleted successfully`, 
+      extra: deletedExtra 
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "An error occurred while deleting the extra" });
+    client.release();
+    console.error("Error deleting extra:", error);
+    
+    // Handle specific error cases
+    if (error.message === "Extra not found") {
+      return res.status(404).json({ error: error.message });
+    }
+    
+    // Handle foreign key constraint errors (shouldn't happen with cascade, but just in case)
+    if (error.code === "23503") {
+      return res.status(400).json({ 
+        error: "Cannot delete extra: it is still referenced by other records" 
+      });
+    }
+    
+    res.status(500).json({ 
+      error: "An error occurred while deleting the extra",
+      details: error.message 
+    });
   }
 });
 router.get("/:extraId", async (req, res) => {

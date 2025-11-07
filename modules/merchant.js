@@ -127,12 +127,23 @@ class MerchantService {
   }
 
   static async deleteMerchant(id) {
+    // First check if merchant exists
+    const checkRes = await pool.query(
+      "SELECT merchant_id FROM merchant WHERE merchant_id = $1",
+      [id]
+    );
+    if (checkRes.rows.length === 0) {
+      throw new Error("Merchant not found");
+    }
+
+    // Delete the merchant (cascade will handle related records)
     const result = await pool.query(
       `DELETE FROM merchant WHERE merchant_id = $1 RETURNING *`,
       [id]
     );
+    
     if (result.rows.length === 0) {
-      throw new Error("Merchant not found");
+      throw new Error("Merchant could not be deleted");
     }
     return result.rows[0];
   }

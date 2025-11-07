@@ -106,13 +106,15 @@ class productController {
           .json({ error: `Category '${productData.category}' not found` });
       }
       const categoryId = categoryResult.rows[0].category_id;
+      const categoryName = productData.category; // Store category name
 
       // 4. CREATE
       const newProduct = await productModel.createProduct({
         product_name: productData.product_name,
         product_components: productData.product_components || null,
         price: parseFloat(productData.price),
-        category_id: categoryId, // ← FIXED
+        category_id: categoryId,
+        category_name: categoryName, // Pass category name to set product_category
         product_photo: photoUrl,
         photo_public_id: photoPublicId,
         is_featured:
@@ -120,9 +122,17 @@ class productController {
           productData.is_featured === "true",
       });
 
+      // Remove photo_data, photo_mime_type, and photo_public_id from response
+      const {
+        photo_data,
+        photo_mime_type,
+        photo_public_id,
+        ...productResponse
+      } = newProduct;
+
       res.status(201).json({
         message: "Product created",
-        product: newProduct,
+        product: productResponse,
       });
     } catch (error) {
       console.error("Error:", error);
@@ -223,15 +233,37 @@ class productController {
   static async deleteProduct(req, res) {
     try {
       const { id } = req.params;
+
+      // Validate ID
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid product ID" });
+      }
+
       const deletedProduct = await productModel.deleteProduct(id);
       res.status(200).json({
         message: `Product with ID ${id} deleted successfully`,
         product: deletedProduct,
       });
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: "An error occurred while deleting the product" });
+      console.error("Error deleting product:", error);
+
+      // Handle specific error cases
+      if (error.message === "Product not found") {
+        return res.status(404).json({ error: error.message });
+      }
+
+      // Handle foreign key constraint errors (shouldn't happen with cascade, but just in case)
+      if (error.code === "23503") {
+        return res.status(400).json({
+          error:
+            "Cannot delete product: it is still referenced by other records",
+        });
+      }
+
+      res.status(500).json({
+        error: "An error occurred while deleting the product",
+        details: error.message,
+      });
     }
   }
 }
