@@ -2,7 +2,6 @@
 const MerchantService = require("../modules/merchant");
 const { uploadFromBuffer, destroy } = require("../utils/cloudinary");
 
-
 exports.createMerchant = async (req, res) => {
   try {
     const merchantData = req.body;
@@ -26,7 +25,11 @@ exports.createMerchant = async (req, res) => {
     }
 
     // === 2. VALIDATE REQUIRED FIELDS ===
-    if (!merchantData.merchant_name || !merchantData.merchant_price || isNaN(merchantData.merchant_price)) {
+    if (
+      !merchantData.merchant_name ||
+      !merchantData.merchant_price ||
+      isNaN(merchantData.merchant_price)
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 

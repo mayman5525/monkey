@@ -924,3 +924,26 @@
 {"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-10-31T22:17:51.287Z"}
 {"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-10-31T22:17:59.693Z"}
 {"level":"info","message":"::1 - - [31/Oct/2025:22:18:29 +0000] \"POST /api/merchants HTTP/1.1\" 201 329 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-10-31T22:18:29.831Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-10-31T22:28:58.857Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-10-31T22:29:06.920Z"}
+{"level":"info","message":"::1 - - [31/Oct/2025:22:29:38 +0000] \"PATCH /api/products/56 HTTP/1.1\" 404 156 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-10-31T22:29:38.772Z"}
+{"level":"info","message":"::1 - - [31/Oct/2025:22:30:00 +0000] \"PUT /api/products/56 HTTP/1.1\" 400 28 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-10-31T22:30:00.278Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-01T01:30:49.515Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-01T01:30:55.039Z"}
+{"level":"info","message":"::1 - - [01/Nov/2025:01:31:45 +0000] \"POST /api/products HTTP/1.1\" 201 391 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-01T01:31:45.441Z"}
+{"level":"info","message":"::1 - - [01/Nov/2025:01:32:59 +0000] \"POST /api/products HTTP/1.1\" 400 35 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-01T01:32:59.300Z"}
+{"level":"info","message":"::1 - - [01/Nov/2025:01:33:27 +0000] \"POST /api/products HTTP/1.1\" 400 35 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-01T01:33:27.152Z"}
+{"level":"info","message":"::1 - - [01/Nov/2025:01:33:56 +0000] \"POST /api/products HTTP/1.1\" 201 531 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-01T01:33:56.830Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-06T02:44:22.990Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-06T02:44:32.986Z"}
+{"level":"info","message":"::1 - - [06/Nov/2025:02:45:37 +0000] \"POST /api/products HTTP/1.1\" 201 531 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T02:45:37.546Z"}
+{"address":"192.168.1.1","code":"ETIMEDOUT","errno":-4039,"level":"error","message":"Database connection failed: connect ETIMEDOUT 192.168.1.1:5432","port":5432,"service":"form-api","stack":"Error: connect ETIMEDOUT 192.168.1.1:5432\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"connect","timestamp":"2025-11-06T03:12:31.470Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-06T03:12:37.976Z"}
+{"level":"info","message":"::1 - - [06/Nov/2025:03:15:22 +0000] \"POST /api/categories HTTP/1.1\" 201 200 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T03:15:22.037Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-06T04:27:16.950Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-06T04:27:23.761Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-06T04:32:50.723Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-06T04:32:58.858Z"}
+{"level":"info","message":"::1 - - [06/Nov/2025:04:41:28 +0000] \"POST /api/products HTTP/1.1\" 400 38 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T04:41:28.541Z"}
+{"level":"info","message":"::1 - - [06/Nov/2025:04:41:52 +0000] \"POST /api/products HTTP/1.1\" 400 42 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T04:41:52.782Z"}
+{"level":"info","message":"::1 - - [06/Nov/2025:04:42:20 +0000] \"POST /api/products HTTP/1.1\" 400 42 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-06T04:42:20.222Z"}
