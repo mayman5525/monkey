@@ -1017,3 +1017,19 @@
 {"level":"info","message":"::1 - - [08/Nov/2025:01:17:20 +0000] \"POST /api/merchants/6 HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:17:20.500Z"}
 {"level":"info","message":"::1 - - [08/Nov/2025:01:17:29 +0000] \"DELETE /api/merchants/6 HTTP/1.1\" 200 531 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:17:29.629Z"}
 {"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-08T01:20:15.077Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T15:47:07.591Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T15:47:15.865Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:15:57:50 +0000] \"POST /api/user/user-details/80 HTTP/1.1\" 404 164 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T15:57:50.407Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:16:00:36 +0000] \"POST /api/user/signin HTTP/1.1\" 400 39 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T16:00:36.535Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T16:01:47.166Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T16:02:04.380Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T16:02:05.548Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T16:02:17.328Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-08T16:02:56.238Z"}
+{"code":"ENOTFOUND","errno":-3008,"hostname":"dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com","level":"error","message":"Database connection failed: getaddrinfo ENOTFOUND dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com","service":"form-api","stack":"Error: getaddrinfo ENOTFOUND dpg-d1uki2er433s73esb6v0-a.oregon-postgres.render.com\n    at D:\\pr\\monkey\\monkey\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"getaddrinfo","timestamp":"2025-11-08T16:06:42.245Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T16:06:53.510Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:16:07:35 +0000] \"GET /api/categories HTTP/1.1\" 500 57 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T16:07:35.186Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T16:09:50.688Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T16:10:00.806Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:16:10:23 +0000] \"POST /api/products HTTP/1.1\" 201 444 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T16:10:23.358Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-08T16:10:29.434Z"}
