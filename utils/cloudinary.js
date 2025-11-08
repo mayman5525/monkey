@@ -48,9 +48,19 @@ const processUploadedFile = (file) => {
   };
 };
 
+// ------------------------------------------------------------------
+// 5. Helper to format item by removing photo data fields
+// ------------------------------------------------------------------
+const formatItemWithPhoto = (item) => {
+  if (!item) return item;
+  const { photo_data, photo_mime_type, photo_public_id, ...formattedItem } = item;
+  return formattedItem;
+};
+
 module.exports = {
   cloudinary,
   uploadFromBuffer,
   destroy,
   processUploadedFile,   // keep for now – will be removed later
+  formatItemWithPhoto,
 };

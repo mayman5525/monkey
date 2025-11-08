@@ -1,6 +1,12 @@
 // controllers/merchant.controller.js
 const MerchantService = require("../modules/merchant");
-const { uploadFromBuffer, destroy } = require("../utils/cloudinary");
+const { uploadFromBuffer, destroy, formatItemWithPhoto } = require("../utils/cloudinary");
+
+// Helper function to format multiple items
+const formatItemsWithPhotos = (items) => {
+  if (!Array.isArray(items)) return items;
+  return items.map(item => formatItemWithPhoto(item));
+};
 
 exports.createMerchant = async (req, res) => {
   try {
@@ -43,7 +49,14 @@ exports.createMerchant = async (req, res) => {
       photo_public_id: photoPublicId,
     });
 
-    res.status(201).json({ success: true, merchant });
+    // Remove photo_data, photo_mime_type, and photo_public_id from response
+    const { photo_data, photo_mime_type, photo_public_id, ...merchantResponse } = merchant;
+
+    res.status(201).json({ 
+      success: true, 
+      message: "Merchant created successfully",
+      merchant: merchantResponse 
+    });
   } catch (error) {
     console.error("Error creating merchant:", error);
     res.status(500).json({ success: false, error: error.message });

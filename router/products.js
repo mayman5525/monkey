@@ -20,8 +20,11 @@ router.get("/:id", productController.getProductById);
 // Search products
 router.get("/search", productController.searchProducts);
 
-// Get products by category
-router.get("/category/:category", productController.gerProductByCategory);
+// Get products by category ID
+router.get(
+  "/category-id/:categoryId",
+  productController.getProductsByCategoryId
+);
 
 // Create product with photo (stored in database)
 router.post(

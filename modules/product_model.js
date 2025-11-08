@@ -17,6 +17,14 @@ class ProductModel {
     ]);
     return res.rows;
   }
+
+  static async getProductsByCategoryId(categoryId) {
+    const res = await pool.query(
+      "SELECT * FROM product WHERE category_id = $1 ORDER BY created_at DESC",
+      [categoryId]
+    );
+    return res.rows;
+  }
   static async searchProducts(query) {
     const res = await pool.query(
       "SELECT * FROM product WHERE product_name ILIKE $1 OR product_description ILIKE $1",

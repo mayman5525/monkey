@@ -5,11 +5,33 @@ class OrderController {
   static async checkoutOrder(req, res) {
     try {
       const { user_id, items } = req.body;
-      if (!user_id || !items || !Array.isArray(items)) {
+      
+      // Validate user_id
+      if (!user_id) {
         return res.status(400).json({
-          error: "Invalid input: user_id and items array are required",
+          error: "user_id is required",
         });
       }
+      
+      if (isNaN(user_id)) {
+        return res.status(400).json({
+          error: "user_id must be a valid number",
+        });
+      }
+
+      // Validate items
+      if (!items || !Array.isArray(items)) {
+        return res.status(400).json({
+          error: "items must be a non-empty array",
+        });
+      }
+
+      if (items.length === 0) {
+        return res.status(400).json({
+          error: "items array cannot be empty",
+        });
+      }
+
       const order = await OrderModel.checkoutOrder({ user_id, items });
       res.status(201).json({
         message: "Checkout successful",

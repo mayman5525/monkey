@@ -21,7 +21,9 @@ class MerchantService {
       updated_at
     )
     VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-    RETURNING *`,
+    RETURNING 
+      merchant_id, merchant_name, merchant_description, merchant_price, 
+      merchant_category, merchant_photo, created_at, updated_at`,
       [
         merchant_name,
         merchant_description || null,
@@ -141,7 +143,7 @@ class MerchantService {
       `DELETE FROM merchant WHERE merchant_id = $1 RETURNING *`,
       [id]
     );
-    
+
     if (result.rows.length === 0) {
       throw new Error("Merchant could not be deleted");
     }

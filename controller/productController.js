@@ -1,7 +1,17 @@
 const productModel = require("../modules/product_model");
 const pool = require("../modules/db");
-const { uploadFromBuffer, destroy } = require("../utils/cloudinary");
-const { formatItemWithPhoto } = require("../utils/cloudinary"); // you can keep this for URL → dataURL if you still need it
+const {
+  uploadFromBuffer,
+  destroy,
+  formatItemWithPhoto,
+} = require("../utils/cloudinary");
+
+// Helper function to format multiple items
+const formatItemsWithPhotos = (items) => {
+  if (!Array.isArray(items)) return items;
+  return items.map((item) => formatItemWithPhoto(item));
+};
+
 class productController {
   static async getAllProducts(req, res) {
     try {
@@ -65,6 +75,29 @@ class productController {
     } catch (error) {
       res.status(500).json({
         error: "An error occurred while retrieving products by category",
+      });
+    }
+  }
+
+  static async getProductsByCategoryId(req, res) {
+    try {
+      const { categoryId } = req.params;
+
+      // Validate categoryId
+      if (isNaN(categoryId)) {
+        return res.status(400).json({ error: "Invalid category ID" });
+      }
+
+      const products = await productModel.getProductsByCategoryId(categoryId);
+      const formattedProducts = formatItemsWithPhotos(products);
+      res.status(200).json({
+        message: `Products in category ID ${categoryId} retrieved successfully`,
+        products: formattedProducts,
+      });
+    } catch (error) {
+      console.error("Error retrieving products by category ID:", error);
+      res.status(500).json({
+        error: "An error occurred while retrieving products by category ID",
       });
     }
   }

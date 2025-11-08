@@ -24,9 +24,22 @@ class OrderModel {
 
       // Add items
       for (const item of items) {
+        // Validate item structure
+        if (!item.type || (!item.product_id && !item.merchant_id)) {
+          throw new Error(`Invalid item structure: ${JSON.stringify(item)}`);
+        }
+
+        // Validate quantity
+        if (!item.quantity || item.quantity <= 0 || !Number.isInteger(item.quantity)) {
+          throw new Error(`Invalid quantity for item: ${JSON.stringify(item)}. Quantity must be a positive integer.`);
+        }
+
         let itemPrice, itemTotal;
 
         if (item.type === "product") {
+          if (!item.product_id) {
+            throw new Error(`Product ID is required for product type item`);
+          }
           const productRes = await client.query(
             `SELECT product_price FROM product WHERE product_id = $1`,
             [item.product_id]
@@ -34,7 +47,13 @@ class OrderModel {
           if (productRes.rows.length === 0)
             throw new Error(`Product ${item.product_id} not found`);
           itemPrice = parseFloat(productRes.rows[0].product_price);
+          if (isNaN(itemPrice) || itemPrice < 0) {
+            throw new Error(`Invalid product price for product ${item.product_id}`);
+          }
         } else if (item.type === "merchant") {
+          if (!item.merchant_id) {
+            throw new Error(`Merchant ID is required for merchant type item`);
+          }
           const merchantRes = await client.query(
             `SELECT merchant_price FROM merchant WHERE merchant_id = $1`,
             [item.merchant_id]
@@ -42,8 +61,11 @@ class OrderModel {
           if (merchantRes.rows.length === 0)
             throw new Error(`Merchant ${item.merchant_id} not found`);
           itemPrice = parseFloat(merchantRes.rows[0].merchant_price);
+          if (isNaN(itemPrice) || itemPrice < 0) {
+            throw new Error(`Invalid merchant price for merchant ${item.merchant_id}`);
+          }
         } else {
-          throw new Error(`Invalid item type for ${JSON.stringify(item)}`);
+          throw new Error(`Invalid item type: ${item.type}. Must be 'product' or 'merchant'`);
         }
 
         itemTotal = itemPrice * item.quantity;
@@ -69,14 +91,27 @@ class OrderModel {
 
         // Extras still only apply to products
         if (item.type === "product" && item.extras?.length) {
+          // Validate extras is an array
+          if (!Array.isArray(item.extras)) {
+            throw new Error(`Extras must be an array for product ${item.product_id}`);
+          }
+          
           for (const extraId of item.extras) {
+            // Validate extraId
+            if (!extraId || isNaN(extraId)) {
+              throw new Error(`Invalid extra ID: ${extraId}`);
+            }
+            
             const extraRes = await client.query(
               `SELECT extra_price FROM extras WHERE extra_id = $1`,
               [extraId]
             );
             if (extraRes.rows.length === 0)
               throw new Error(`Extra ${extraId} not found`);
-            const extraPrice = extraRes.rows[0].extra_price;
+            const extraPrice = parseFloat(extraRes.rows[0].extra_price);
+            if (isNaN(extraPrice) || extraPrice < 0) {
+              throw new Error(`Invalid extra price for extra ${extraId}`);
+            }
 
             await client.query(
               `INSERT INTO order_item_extras (order_item_id, extra_id, extra_price)
