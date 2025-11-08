@@ -25,6 +25,8 @@ router.get("/", merchantController.getAllMerchants);
 // Get merchant by ID
 router.get("/:id", merchantController.getMerchantById);
 
+
+
 // Update merchant with photo
 router.put(
   "/:id",

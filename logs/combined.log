@@ -1002,3 +1002,18 @@
 {"level":"info","message":"::1 - - [08/Nov/2025:00:51:50 +0000] \"GET /api/merchants HTTP/1.1\" 200 1788 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T00:51:50.907Z"}
 {"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-08T00:52:43.675Z"}
 {"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-08T00:53:03.897Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T00:58:30.026Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T00:58:39.449Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T00:59:15.538Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T00:59:22.821Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T01:03:42.192Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T01:03:49.560Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-08T01:09:40.068Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T01:09:50.099Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:01:14:18 +0000] \"POST /api/merchants/5 HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:14:18.649Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:01:14:50 +0000] \"PUT /api/merchants/5 HTTP/1.1\" 200 422 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:14:50.919Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:01:16:01 +0000] \"PUT /api/merchants/5 HTTP/1.1\" 200 422 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:16:01.869Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:01:16:43 +0000] \"POST /api/merchants HTTP/1.1\" 201 420 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:16:43.215Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:01:17:20 +0000] \"POST /api/merchants/6 HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:17:20.500Z"}
+{"level":"info","message":"::1 - - [08/Nov/2025:01:17:29 +0000] \"DELETE /api/merchants/6 HTTP/1.1\" 200 531 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T01:17:29.629Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-08T01:20:15.077Z"}

@@ -76,7 +76,9 @@ class MerchantService {
        photo_public_id = COALESCE($6, photo_public_id),
        updated_at = NOW()
      WHERE merchant_id = $7
-     RETURNING *`,
+     RETURNING 
+       merchant_id, merchant_name, merchant_description, merchant_price, 
+       merchant_category, merchant_photo, created_at, updated_at`,
       [
         merchant_name,
         merchant_description,
