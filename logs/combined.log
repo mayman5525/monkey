@@ -1033,3 +1033,6 @@
 {"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-08T16:10:00.806Z"}
 {"level":"info","message":"::1 - - [08/Nov/2025:16:10:23 +0000] \"POST /api/products HTTP/1.1\" 201 444 \"-\" \"PostmanRuntime/7.49.1\"","service":"form-api","timestamp":"2025-11-08T16:10:23.358Z"}
 {"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-08T16:10:29.434Z"}
+{"level":"info","message":"Database connected successfully","service":"form-api","timestamp":"2025-11-10T23:37:06.749Z"}
+{"level":"info","message":" Server running on port 3000","service":"form-api","timestamp":"2025-11-10T23:37:13.896Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","service":"form-api","timestamp":"2025-11-10T23:50:09.298Z"}

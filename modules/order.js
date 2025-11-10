@@ -138,14 +138,14 @@ class OrderModel {
       client.release();
     }
   }
-  static async completeOrder(orderId) {
+  static async completeOrder(orderId, discountType, discountValue) {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
 
       // Get order details
       const orderRes = await client.query(
-        `SELECT order_id, user_id, order_status, total_price, points_earned, points_redeemed
+        `SELECT order_id, user_id, order_status, total_price, points_earned, points_redeemed, applied_discount
          FROM orders 
          WHERE order_id = $1`,
         [orderId]
@@ -169,13 +169,56 @@ class OrderModel {
         );
       }
 
-      // Update order status to completed
+      let originalTotal = parseFloat(order.total_price);
+      let discountAmount = 0;
+      let finalTotal = originalTotal;
+
+      // Calculate points based on original total (before discount)
+      // Points are calculated first and don't change when discount is applied
+      const newPointsEarned = Math.floor(originalTotal * 10);
+
+      // Apply discount if provided (after points calculation)
+      if (discountType && discountValue !== undefined && discountValue !== null) {
+        const discountVal = parseFloat(discountValue);
+        
+        if (isNaN(discountVal) || discountVal < 0) {
+          throw new Error("Discount value must be a positive number");
+        }
+
+        if (discountType === "percentage") {
+          // Validate percentage: must be 0-60
+          if (discountVal < 0 || discountVal > 60) {
+            throw new Error("Discount percentage must be between 0 and 60");
+          }
+          discountAmount = originalTotal * (discountVal / 100);
+        } else if (discountType === "amount") {
+          // Validate amount: must be > 0 and < 0.6 * total_price
+          const maxDiscount = originalTotal * 0.6;
+          if (discountVal <= 0) {
+            throw new Error("Discount amount must be greater than 0");
+          }
+          if (discountVal >= maxDiscount) {
+            throw new Error(`Discount amount must be less than ${maxDiscount.toFixed(2)} (60% of total)`);
+          }
+          discountAmount = discountVal;
+        } else {
+          throw new Error("Discount type must be 'amount' or 'percentage'");
+        }
+
+        // Calculate final total after discount
+        finalTotal = Math.max(originalTotal - discountAmount, 0);
+      }
+
+      // Update order status to completed with discount applied
       await client.query(
         `UPDATE orders 
          SET order_status = 'completed', 
+             total_price = $1,
+             applied_discount = $2,
+             points_earned = $3,
              updated_at = NOW()
-         WHERE order_id = $1`,
-        [orderId]
+         WHERE order_id = $4`,
+        [finalTotal, discountAmount, newPointsEarned, orderId]
       );
 
       // Update user metrics
@@ -216,7 +259,7 @@ class OrderModel {
           completedOrders,
           totalSpent,
           avgOrderValue,
-          order.points_earned,
+          newPointsEarned,
           orderId,
           order.points_redeemed,
           order.user_id,
@@ -227,7 +270,7 @@ class OrderModel {
 
       // Fetch updated order
       const updatedOrder = await pool.query(
-        `SELECT order_id, order_code, order_status, total_price, points_earned, points_redeemed, updated_at
+        `SELECT order_id, order_code, order_status, total_price, points_earned, points_redeemed, applied_discount, updated_at
          FROM orders 
          WHERE order_id = $1`,
         [orderId]
@@ -708,6 +751,86 @@ class OrderModel {
     } catch (error) {
       console.error("Error fetching all orders for user:", error.message);
       throw error;
+    }
+  }
+
+  static async cancelOrder(orderId) {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+
+      // Get order details
+      const orderRes = await client.query(
+        `SELECT order_id, user_id, order_status, total_price
+         FROM orders 
+         WHERE order_id = $1`,
+        [orderId]
+      );
+
+      if (orderRes.rows.length === 0) {
+        throw new Error("Order not found");
+      }
+
+      const order = orderRes.rows[0];
+
+      // Check if order is pending (only pending orders can be cancelled)
+      if (order.order_status !== "pending") {
+        throw new Error(
+          `Cannot cancel order with status: ${order.order_status}. Only pending orders can be cancelled.`
+        );
+      }
+
+      // Update order status to cancelled
+      await client.query(
+        `UPDATE orders 
+         SET order_status = 'cancelled', 
+             updated_at = NOW()
+         WHERE order_id = $1`,
+        [orderId]
+      );
+
+      // Recalculate user metrics (excluding points)
+      // Only count completed orders for metrics
+      const userMetrics = await client.query(
+        `SELECT 
+           COUNT(*) FILTER (WHERE order_status = 'completed') as completed_orders,
+           COALESCE(SUM(total_price) FILTER (WHERE order_status = 'completed'), 0) as total_spent
+         FROM orders 
+         WHERE user_id = $1`,
+        [order.user_id]
+      );
+
+      const metrics = userMetrics.rows[0];
+      const completedOrders = parseInt(metrics.completed_orders);
+      const totalSpent = parseFloat(metrics.total_spent);
+      const avgOrderValue =
+        completedOrders > 0 ? totalSpent / completedOrders : 0;
+
+      // Update user table with recalculated metrics (do NOT modify points)
+      await client.query(
+        `UPDATE users 
+         SET total_orders = $1,
+             total_spent = $2,
+             avg_order_value = $3,
+             updated_at = NOW()
+         WHERE id = $4`,
+        [
+          completedOrders,
+          totalSpent,
+          avgOrderValue,
+          order.user_id,
+        ]
+      );
+
+      await client.query("COMMIT");
+
+      return { message: "Order cancelled successfully" };
+    } catch (error) {
+      await client.query("ROLLBACK");
+      console.error("Error cancelling order:", error.message);
+      throw error;
+    } finally {
+      client.release();
     }
   }
 }

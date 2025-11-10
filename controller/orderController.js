@@ -47,8 +47,13 @@ class OrderController {
   static async completeOrder(req, res) {
     try {
       const orderId = req.params.orderId;
-      await OrderModel.completeOrder(orderId);
-      res.status(200).json({ message: "Order completed successfully" });
+      const { discount_type, discount_value } = req.body;
+      
+      const order = await OrderModel.completeOrder(orderId, discount_type, discount_value);
+      res.status(200).json({ 
+        message: "Order completed successfully",
+        order: order
+      });
     } catch (error) {
       console.error("Error in completeOrder:", error.message);
       res.status(400).json({ error: error.message });
@@ -154,6 +159,18 @@ class OrderController {
     } catch (error) {
       console.error("Error in searchOrdersByCode:", error.message);
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  // Cancel order (admin only)
+  static async cancelOrder(req, res) {
+    try {
+      const orderId = req.params.orderId;
+      await OrderModel.cancelOrder(orderId);
+      res.status(200).json({ message: "Order cancelled successfully" });
+    } catch (error) {
+      console.error("Error in cancelOrder:", error.message);
+      res.status(400).json({ error: error.message });
     }
   }
 }
