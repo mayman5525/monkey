@@ -102,6 +102,10 @@ AFTER INSERT OR UPDATE OR DELETE ON order_item_extras
 FOR EACH ROW
 EXECUTE FUNCTION update_order_total();
 
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS is_cashier BOOLEAN DEFAULT FALSE;
+
+
 -- =========================
 -- Update user metrics trigger
 -- =========================

@@ -28,7 +28,7 @@ async function createAdminUser() {
 
     if (existingUser.rows.length > 0) {
       const user = existingUser.rows[0];
-      
+
       // Update existing user to ensure they are admin
       if (!user.is_admin) {
         await client.query(
@@ -39,7 +39,7 @@ async function createAdminUser() {
       } else {
         console.log(`Admin user already exists with ID: ${user.id}`);
       }
-      
+
       await client.query("COMMIT");
       return { success: true, message: "Admin user already exists", userId: user.id };
     }
@@ -79,7 +79,7 @@ async function createAdminUser() {
 
     // Drop trigger if exists and recreate it
     await client.query(`DROP TRIGGER IF EXISTS trigger_prevent_admin_deletion ON users;`);
-    
+
     await client.query(`
       CREATE TRIGGER trigger_prevent_admin_deletion
       BEFORE DELETE ON users
@@ -88,13 +88,13 @@ async function createAdminUser() {
     `);
 
     await client.query("COMMIT");
-    
+
     console.log(`Admin user created successfully with ID: ${newUser.id}`);
-    return { 
-      success: true, 
-      message: "Admin user created successfully", 
+    return {
+      success: true,
+      message: "Admin user created successfully",
       userId: newUser.id,
-      email: newUser.user_email 
+      email: newUser.user_email
     };
   } catch (error) {
     await client.query("ROLLBACK");

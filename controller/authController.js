@@ -74,18 +74,26 @@ exports.signin = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // 3. Generate JWT (include role & id inside the token as well if needed)
+    // 3. Determine user role (priority: admin > cashier > user)
+    let userRole = "user";
+    if (user.is_admin) {
+      userRole = "admin";
+    } else if (user.is_cashier) {
+      userRole = "cashier";
+    }
+
+    // 4. Generate JWT (include role & id inside the token as well if needed)
     const token = jwt.sign(
       {
         id: user.id,
         email: user.user_email,
-        role: user.is_admin ? "admin" : "user",
+        role: userRole,
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // 4. Respond with id + role
+    // 5. Respond with id + role + is_cashier flag
     res.json({
       message: "Sign in successful",
       token,
@@ -94,7 +102,9 @@ exports.signin = async (req, res) => {
         name: user.user_name,
         email: user.user_email,
         number: user.user_number,
-        role: user.is_admin ? "admin" : "user",
+        role: userRole,
+        is_admin: user.is_admin || false,
+        is_cashier: user.is_cashier || false,
       },
     });
   } catch (error) {
