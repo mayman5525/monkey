@@ -72,6 +72,7 @@ exports.createMerchant = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 exports.getAllMerchants = async (req, res) => {
   try {
     const merchants = await MerchantService.getAllMerchants();

@@ -56,6 +56,7 @@ app.use("/api/extras", require("./router/extras"));
 app.use("/api/orders", require("./router/order"));
 app.use("/api/merchants", require("./router/merchant"));
 app.use("/api/categories", require("./router/category"));
+app.use("/api/discounts", require("./router/discount"));
 const photoRoutes = require("./router/photo");
 app.use("/uploads", photoRoutes);
 // // 404 handler

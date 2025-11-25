@@ -177,39 +177,7 @@ class productController {
       const { id } = req.params;
       const updatedData = req.body;
 
-      // === 1. FETCH CURRENT PRODUCT (to get old public_id) ===
-      const currentProduct = await productModel.getProductsById(id);
-      if (!currentProduct || currentProduct.length === 0) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-      const oldPublicId = currentProduct[0].photo_public_id;
-
-      // === 2. UPLOAD NEW PHOTO (if provided) ===
-      let photoUrl = currentProduct[0].product_photo; // keep old
-      let photoPublicId = oldPublicId;
-
-      if (req.file) {
-        try {
-          // Delete old image from Cloudinary
-          if (oldPublicId) {
-            await destroy(oldPublicId);
-            console.log("Deleted old image:", oldPublicId);
-          }
-
-          // Upload new image
-          const result = await uploadFromBuffer(req.file.buffer, {
-            folder: "ecommerce/products",
-          });
-          photoUrl = result.secure_url;
-          photoPublicId = result.public_id;
-          console.log("Uploaded new image:", result.secure_url);
-        } catch (uploadError) {
-          console.error("Cloudinary upload failed:", uploadError);
-          return res.status(500).json({ error: "Failed to upload image" });
-        }
-      }
-
-      // === 3. VALIDATE REQUIRED FIELDS ===
+      // === 1. VALIDATE INPUT FIRST ===
       if (
         !updatedData.product_name ||
         !updatedData.price ||
@@ -221,45 +189,99 @@ class productController {
         });
       }
 
-      // === 4. CONVERT CATEGORY NAME → ID ===
-      const categoryResult = await pool.query(
+      // === 2. FETCH CURRENT PRODUCT ===
+      const currentProduct = await productModel.getProductsById(id);
+      if (!currentProduct || currentProduct.length === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      const old = currentProduct[0];
+      let photoUrl = old.product_photo;
+      let photoPublicId = old.photo_public_id;
+
+      // === 3. GET category_id FROM category name ===
+      console.log("Looking up category:", updatedData.category);
+
+      const categoryQuery = await pool.query(
         `SELECT category_id FROM category WHERE category_name = $1`,
-        [updatedData.category]
+        [updatedData.category.trim()]
       );
 
-      if (categoryResult.rows.length === 0) {
+      if (categoryQuery.rows.length === 0) {
         return res.status(400).json({
-          error: `Invalid category: '${updatedData.category}' does not exist`,
+          error: `Category '${updatedData.category}' not found`,
         });
       }
-      updatedData.category = categoryResult.rows[0].category_id;
 
-      // === 5. SET OPTIONAL FIELDS ===
-      updatedData.is_featured =
+      const categoryId = categoryQuery.rows[0].category_id;
+      console.log("Category ID found:", categoryId);
+
+      // === 4. HANDLE IMAGE UPLOAD ===
+      if (req.file) {
+        try {
+          // Delete old image
+          if (photoPublicId) {
+            await destroy(photoPublicId);
+          }
+
+          // Upload new image
+          const uploaded = await uploadFromBuffer(req.file.buffer, {
+            folder: "ecommerce/products",
+          });
+
+          photoUrl = uploaded.secure_url;
+          photoPublicId = uploaded.public_id;
+        } catch (imgErr) {
+          console.error("Image upload failed:", imgErr);
+          return res.status(500).json({ error: "Failed to upload image" });
+        }
+      }
+
+      // === 5. CLEAN OPTIONAL FIELDS ===
+      const isFeatured =
         updatedData.is_featured === true || updatedData.is_featured === "true";
 
-      // === 6. CALL MODEL WITH NEW VALUES ===
+      // === 6. UPDATE IN DATABASE (Only pass category name) ===
       const updatedProduct = await productModel.updateProduct(id, {
         product_name: updatedData.product_name,
-        product_components: updatedData.product_components,
-        price: updatedData.price,
-        category: updatedData.category,
+        product_components: updatedData.product_components || null,
+        price: parseFloat(updatedData.price),
+        category_name: updatedData.category.trim(), // ← ONLY category name
         product_photo: photoUrl,
-        is_featured: updatedData.is_featured,
         photo_public_id: photoPublicId,
+        is_featured: isFeatured,
       });
 
-      const formattedProduct = formatItemWithPhoto(updatedProduct);
+      // === 7. CLEAN RESPONSE ===
+      const {
+        photo_data,
+        photo_mime_type,
+        photo_public_id: _,
+        ...cleanedProduct
+      } = updatedProduct;
+
       res.status(200).json({
         message: "Product updated successfully",
-        product: formattedProduct,
+        product: cleanedProduct,
       });
     } catch (error) {
       console.error("Error updating product:", error);
-      if (error.code === "23503") {
-        return res.status(400).json({ error: "Invalid category" });
+
+      if (error.code === "ECONNRESET") {
+        return res.status(503).json({
+          error: "Database connection lost. Please try again.",
+        });
       }
-      res.status(500).json({ error: "An error occurred while updating" });
+
+      if (error.message === "Product not found") {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      res.status(500).json({
+        error: "Server error",
+        details:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
+      });
     }
   }
 
