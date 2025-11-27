@@ -33,6 +33,34 @@ class ProductModel {
     return res.rows;
   }
   // Create product with photo
+  static async createProduct({
+    product_name,
+    product_components,
+    price,
+    category_id,
+    category_name,
+    product_photo,
+    is_featured,
+    photo_public_id,
+  }) {
+    const query = `
+    INSERT INTO product (product_name, product_components, product_price, category_id, product_category, product_photo, is_featured, photo_public_id)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING *
+  `;
+    const values = [
+      product_name,
+      product_components,
+      price,
+      category_id,
+      category_name,
+      product_photo,
+      is_featured,
+      photo_public_id,
+    ];
+    const res = await pool.query(query, values);
+    return res.rows[0];
+  }
   // modules/product_model.js
   // modules/product_model.js
   static async updateProduct(

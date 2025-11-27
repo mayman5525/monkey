@@ -131,7 +131,7 @@ class productController {
       // 3. GET category_id
       const categoryResult = await pool.query(
         `SELECT category_id FROM category WHERE category_name = $1`,
-        [productData.category]
+        [productData.category.trim()]
       );
       if (categoryResult.rows.length === 0) {
         return res
@@ -139,7 +139,7 @@ class productController {
           .json({ error: `Category '${productData.category}' not found` });
       }
       const categoryId = categoryResult.rows[0].category_id;
-      const categoryName = productData.category; // Store category name
+      const categoryName = productData.category.trim(); // Store category name
 
       // 4. CREATE
       const newProduct = await productModel.createProduct({
@@ -168,8 +168,26 @@ class productController {
         product: productResponse,
       });
     } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: "Server error" });
+      console.error("Error creating product:", error);
+
+      // Handle specific database errors
+      if (error.code === "23503") {
+        return res.status(400).json({
+          error: "Invalid category reference",
+        });
+      }
+
+      if (error.code === "23505") {
+        return res.status(400).json({
+          error: "Product with this name already exists",
+        });
+      }
+
+      res.status(500).json({
+        error: "Server error",
+        details:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
+      });
     }
   }
   static async updateProduct(req, res) {
@@ -177,19 +195,17 @@ class productController {
       const { id } = req.params;
       const updatedData = req.body;
 
-      // === 1. VALIDATE INPUT FIRST ===
+      // 1. VALIDATE
       if (
         !updatedData.product_name ||
         !updatedData.price ||
         isNaN(updatedData.price) ||
         !updatedData.category
       ) {
-        return res.status(400).json({
-          error: "Missing required fields: product_name, price, category",
-        });
+        return res.status(400).json({ error: "Missing required fields" });
       }
 
-      // === 2. FETCH CURRENT PRODUCT ===
+      // 2. FETCH CURRENT PRODUCT
       const currentProduct = await productModel.getProductsById(id);
       if (!currentProduct || currentProduct.length === 0) {
         return res.status(404).json({ error: "Product not found" });
@@ -199,24 +215,7 @@ class productController {
       let photoUrl = old.product_photo;
       let photoPublicId = old.photo_public_id;
 
-      // === 3. GET category_id FROM category name ===
-      console.log("Looking up category:", updatedData.category);
-
-      const categoryQuery = await pool.query(
-        `SELECT category_id FROM category WHERE category_name = $1`,
-        [updatedData.category.trim()]
-      );
-
-      if (categoryQuery.rows.length === 0) {
-        return res.status(400).json({
-          error: `Category '${updatedData.category}' not found`,
-        });
-      }
-
-      const categoryId = categoryQuery.rows[0].category_id;
-      console.log("Category ID found:", categoryId);
-
-      // === 4. HANDLE IMAGE UPLOAD ===
+      // 3. HANDLE IMAGE UPLOAD
       if (req.file) {
         try {
           // Delete old image
@@ -237,39 +236,58 @@ class productController {
         }
       }
 
-      // === 5. CLEAN OPTIONAL FIELDS ===
-      const isFeatured =
-        updatedData.is_featured === true || updatedData.is_featured === "true";
+      // 4. GET category_id
+      const categoryResult = await pool.query(
+        `SELECT category_id FROM category WHERE category_name = $1`,
+        [updatedData.category.trim()]
+      );
+      if (categoryResult.rows.length === 0) {
+        return res
+          .status(400)
+          .json({ error: `Category '${updatedData.category}' not found` });
+      }
+      const categoryId = categoryResult.rows[0].category_id;
+      const categoryName = updatedData.category.trim(); // Store category name
 
-      // === 6. UPDATE IN DATABASE (Only pass category name) ===
+      // 5. UPDATE
       const updatedProduct = await productModel.updateProduct(id, {
         product_name: updatedData.product_name,
         product_components: updatedData.product_components || null,
         price: parseFloat(updatedData.price),
-        category_name: updatedData.category.trim(), // ← ONLY category name
+        category_id: categoryId,
+        category_name: categoryName, // Pass category name to set product_category
         product_photo: photoUrl,
         photo_public_id: photoPublicId,
-        is_featured: isFeatured,
+        is_featured:
+          updatedData.is_featured === true ||
+          updatedData.is_featured === "true",
       });
 
-      // === 7. CLEAN RESPONSE ===
+      // Remove photo_data, photo_mime_type, and photo_public_id from response
       const {
         photo_data,
         photo_mime_type,
-        photo_public_id: _,
-        ...cleanedProduct
+        photo_public_id,
+        ...productResponse
       } = updatedProduct;
 
       res.status(200).json({
         message: "Product updated successfully",
-        product: cleanedProduct,
+        product: productResponse,
       });
     } catch (error) {
       console.error("Error updating product:", error);
 
-      if (error.code === "ECONNRESET") {
-        return res.status(503).json({
-          error: "Database connection lost. Please try again.",
+      // Handle specific database errors
+      if (error.code === "23503") {
+        return res.status(400).json({
+          error: "Invalid category reference",
+        });
+      }
+
+      if (error.code === "23505") {
+        return res.status(400).json({
+          error: "Product with this name already exists",
         });
       }
 
